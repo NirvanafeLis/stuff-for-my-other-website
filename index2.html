@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-webtui-theme="catppuccin-mocha">
+<head>
+  <meta charset="UTF-8">
+  <title>noir :: cv</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- WebTUI 最新 full.css -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"
+  />
+
+  <!-- 页面布局和自定义样式 -->
+  <style>
+    :root {
+      --tui-border: #888; /* 提高黑框可见度 */
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      padding: 0;
+      background: var(--tui-bg);
+    }
+
+    /* 外层黑框容器 */
+    .window-wrapper {
+      height: 100%;
+      padding: 1lh;
+      background: #ffffff; /* 黑框背景 */
+      box-sizing: border-box;
+    }
+
+    /* 内部 TUI window */
+    .window {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      height: 100%;
+      background: var(--tui-bg);
+      
+      border: 2px solid #000; /* 黑框边框 */
+    }
+
+    /* 顶部 header 栏 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5lh 1ch;
+      border-bottom: 1px solid var(--tui-border);
+    }
+
+    .header a {
+      text-decoration: none;
+      color: var(--tui-fg);
+      border: 1px solid var(--tui-border);
+      padding: 0.2lh 0.5ch;
+      border-radius: 0.25ch;
+      cursor: pointer;
+      background: var(--tui-bg);
+    }
+
+    /* 状态栏 */
+    .status {
+      padding: 0.5lh 1ch;
+      border-top: 1px solid var(--tui-border);
+      border-bottom: none;
+    }
+
+    /* 主体内容 */
+    .content {
+      display: grid;
+      grid-template-columns: 28ch 1fr;
+      min-height: 0;
+    }
+
+    /* 左侧文件树 */
+    .tree {
+      border-right: 1px solid var(--tui-border);
+      padding: 0.5lh 1ch;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .tree ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tree li {
+      cursor: pointer;
+      padding: 0.1lh 0.5ch;
+    }
+
+    .tree li.active {
+      background: var(--tui-fg);
+      color: var(--tui-bg);
+    }
+
+    /* 右侧内容 */
+    .viewer {
+      padding: 1lh 2ch;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="window-wrapper">
+    <div class="window">
+      <!-- 顶部 -->
+      <div class="header">
+        <span>~/cv</span>
+        <a href="https://maonie.neocities.org/">返回</a>
+      </div>
+
+      <!-- 主体 -->
+      <div class="content">
+        <!-- 左侧文件树 -->
+        <nav class="tree">
+          <ul>
+            <li class="active" data-target="about">about.md</li>
+            <li data-target="education">education.md</li>
+            <li data-target="skills">skills.md</li>
+            <li data-target="projects">projects.md</li>
+          </ul>
+        </nav>
+
+        <!-- 右侧内容 -->
+        <main class="viewer">
+          <section id="about" class="panel active">
+<pre># about
+  总之先说声你好
+  还在编写中 剩下几个md都是空的
+</pre>
+          </section>
+
+          <section id="education" class="panel">
+<pre># Education
+</pre>
+          </section>
+
+          <section id="skills" class="panel">
+<pre># Skills
+</pre>
+          </section>
+
+          <section id="projects" class="panel">
+<pre># Projects
+</pre>
+          </section>
+        </main>
+      </div>
+
+      <!-- 状态栏 -->
+      <div class="status">
+        Path: ~/cv/about.md
+      </div>
+    </div>
+  </div>
+
+  <!-- 左侧点击切换右侧内容 -->
+  <script>
+    const items = document.querySelectorAll('.tree li');
+    const panels = document.querySelectorAll('.panel');
+    const status = document.querySelector('.status');
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        items.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        panels.forEach(p => p.classList.remove('active'));
+        document.getElementById(item.dataset.target).classList.add('active');
+
+        status.textContent = `Path: ~/cv/${item.textContent}`;
+      });
+    });
+  </script>
+</body>
+</html>

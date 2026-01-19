@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-webtui-theme="monokai">
+<head>
+  <meta charset="UTF-8" />
+  <title>猫涅的秘密结社</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="favicon.png">
+  <!-- WebTUI -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"
+  />
+  <style>
+
+
+/* 保证内容层在上面 */
+body {
+  position: relative;
+  z-index: 1;
+}
+
+          @font-face {
+            font-family: "dianzhen";
+            src:url("凤凰点阵体 12px.ttf");
+        }        html {
+  background: transparent;
+}
+
+/* 背景图 + 黑色遮罩 */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.8)
+    ),
+    url("background.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body {
+  font-family: "JetBrains Mono", monospace;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+
+  position: relative;
+  z-index: 1;      /* 关键：内容层 */
+  overflow-x: hidden;
+}
+
+
+
+
+.container {
+  max-width: 1100px;
+  width: 100%;
+  margin: auto;
+  padding: 3lh 3ch 5lh;
+
+  background: transparent;
+  backdrop-filter: none;
+
+  border-radius: 10px;
+}
+
+
+
+
+    /* Hero 布局 */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 4ch;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 左侧文案 */
+    .intro h1 {
+      font-size: 2.2rem;
+      margin: 0;
+    }
+
+    .intro h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      color: var(--foreground1);
+      margin-top: .5lh;
+    }
+
+    .intro p {
+      margin-top: 1lh;
+      max-width: 40ch;
+      color: var(--foreground1);
+    }
+
+    .intro a {
+      display: inline-block;
+      margin-top: 1.5lh;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .intro a:hover {
+      text-decoration: underline;
+    }
+
+.terminal {
+  background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+
+}
+
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: .5ch;
+      padding: .6lh 1ch;
+      border-bottom: 1px solid var(--foreground2);
+  background: rgba(255, 255, 255, 0.5); /* 半透明黑色背景 */
+    }
+
+    .control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .red { background: var(--red); }
+    .yellow { background: var(--yellow); }
+    .green { background: var(--green); }
+
+    .terminal-title {
+      margin-left: 1ch;
+      color: var(--foreground1);
+      font-size: .9rem;
+    }
+
+    .terminal-body {
+  color: var(--foreground0);
+      padding: 1lh 2ch;
+      line-height: 1.6;
+      font-size: .95rem;
+    }
+
+    .prompt {
+      color: var(--accent);
+      margin-right: 1ch;
+    }
+
+    .cursor {
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+#statusline {
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--background0);
+    border-top: 1px solid var(--background2)
+}
+#statusline img {
+  height: 1lh; /* 与行高匹配 */
+  width: auto;
+  margin-right: 0.5ch;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+#blue
+{
+    color: rgb(0, 116, 151);
+}
+
+@layer utils {
+    column,[is-~=column] {
+        flex-direction: column
+    }
+
+    row,column,[is-~=row],[is-~=column] {
+        display: flex;
+        &[gap-~="1"] {
+            column-gap: 1ch;
+            row-gap: 1lh
+        }
+
+        &[gap-~="2"] {
+            column-gap: 2ch;
+            row-gap: 2lh
+        }
+
+        &[gap-~="4"] {
+            column-gap: 4ch;
+            row-gap: 4lh
+        }
+
+        &[self-~=grow] {
+            flex-grow: 1
+        }
+
+        &[self-~="!grow"] {
+            flex-grow: 0
+        }
+
+        &[self-~=shrink] {
+            flex-shrink: 1
+        }
+
+        &[self-~="!shrink"] {
+            flex-shrink: 0
+        }
+
+        &[self-~="!basis"] {
+            flex-basis: 0
+        }
+
+        &[align-^=start] {
+            align-items: flex-start
+        }
+
+        &[align-^=end] {
+            align-items: flex-end
+        }
+
+        &[align-^=center] {
+            align-items: center
+        }
+
+        &[align-^=stretch] {
+            align-items: stretch
+        }
+
+        &[align-$=between] {
+            justify-content: space-between
+        }
+
+        &[align-$=start] {
+            justify-content: flex-start
+        }
+
+        &[align-$=end] {
+            justify-content: flex-end
+        }
+
+        &[align-$=center] {
+            justify-content: center
+        }
+    }
+}
+
+@layer utils {
+    [space-] {
+        &[space-~="p:0"] {
+            padding: 0
+        }
+
+        &[space-~="p:1"] {
+            padding: 1lh 1ch
+        }
+
+        &[space-~="p:2"] {
+            padding: 2lh 2ch
+        }
+
+        &[space-~="px:0"] {
+            padding-left: 0;
+            padding-right: 0
+        }
+
+        &[space-~="px:1"] {
+            padding-left: 1ch;
+            padding-right: 1ch
+        }
+
+        &[space-~="px:2"] {
+            padding-left: 2ch;
+            padding-right: 2ch
+        }
+
+        &[space-~="px:3"] {
+            padding-left: 3ch;
+            padding-right: 3ch
+        }
+
+        &[space-~="px:4"] {
+            padding-left: 4ch;
+            padding-right: 4ch
+        }
+
+        &[space-~="py:0"] {
+            padding-top: 0;
+            padding-bottom: 0
+        }
+
+        &[space-~="py:1"] {
+            padding-top: 1lh;
+            padding-bottom: 1lh
+        }
+
+        &[space-~="py:2"] {
+            padding-top: 2lh;
+            padding-bottom: 2lh
+        }
+
+        &[space-~="pl:0"] {
+            padding-left: 0
+        }
+
+        &[space-~="pl:1"] {
+            padding-left: 1ch
+        }
+
+        &[space-~="pl:2"] {
+            padding-left: 2ch
+        }
+
+        &[space-~="pr:0"] {
+            padding-right: 0
+        }
+
+        &[space-~="pr:1"] {
+            padding-right: 1ch
+        }
+
+        &[space-~="pr:2"] {
+            padding-right: 2ch
+        }
+
+        &[space-~="pt:0"] {
+            padding-top: 0
+        }
+
+        &[space-~="pt:1"] {
+            padding-top: 1lh
+        }
+
+        &[space-~="pt:2"] {
+            padding-top: 2lh
+        }
+
+        &[space-~="pb:0"] {
+            padding-bottom: 0
+        }
+
+        &[space-~="pb:1"] {
+            padding-bottom: 1lh
+        }
+
+        &[space-~="pb:2"] {
+            padding-bottom: 2lh
+        }
+
+        &[space-~="mx:0"] {
+            margin-left: 0;
+            margin-right: 0
+        }
+
+        &[space-~="mx:1"] {
+            margin-left: 1ch;
+            margin-right: 1ch
+        }
+
+        &[space-~="mx:2"] {
+            margin-left: 2ch;
+            margin-right: 2ch
+        }
+
+        &[space-~="my:0"] {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+
+        &[space-~="my:1"] {
+            margin-top: 1lh;
+            margin-bottom: 1lh
+        }
+
+        &[space-~="my:2"] {
+            margin-top: 2lh;
+            margin-bottom: 2lh
+        }
+
+        &[space-~="ml:0"] {
+            margin-left: 0
+        }
+
+        &[space-~="ml:1"] {
+            margin-left: 1ch
+        }
+
+        &[space-~="ml:2"] {
+            margin-left: 2ch
+        }
+
+        &[space-~="mr:0"] {
+            margin-right: 0
+        }
+
+        &[space-~="mr:1"] {
+            margin-right: 1ch
+        }
+
+        &[space-~="mr:2"] {
+            margin-right: 2ch
+        }
+
+        &[space-~="mt:0"] {
+            margin-top: 0
+        }
+
+        &[space-~="mt:1"] {
+            margin-top: 1lh
+        }
+
+        &[space-~="mt:2"] {
+            margin-top: 2lh
+        }
+
+        &[space-~="mb:0"] {
+            margin-bottom: 0
+        }
+
+        &[space-~="mb:1"] {
+            margin-bottom: 1lh
+        }
+
+        &[space-~="mb:2"] {
+            margin-bottom: 2lh
+        }
+    }
+}
+
+
+  </style>
+</head>
+
+<body>
+<div id="cursor-trail"></div>
+
+
+<div class="container">
+
+  <section class="hero">
+
+    <!-- 左侧介绍 -->
+    <div class="intro">
+      <h1>猫涅的秘密结社</h1>
+      <h2>Cyber Security / C / Linux</h2>
+
+      <p>
+        一个终端风格的个人主页    <br>
+        很明显这只是个半成品——等我再写会
+      </p>
+
+      <a href="index2.html" id="blue">进入系统 →（beta版！）</a><br>
+      <a href="index3.html" id="blue">介绍页面 →</a><br>
+    </div>
+
+    <!-- 右侧 Terminal -->
+    <div class="terminal">
+      <div class="terminal-header">
+            <script src="/oneko/oneko.js"></script>
+        <span class="terminal-title">noir@blog:~</span>
+      </div>
+
+      <div class="terminal-body">
+        <div><span class="prompt">$</span>whoami</div>
+        <div>信息安全专业本科生 / C / Linux / Web</div>
+
+        <br />
+
+        <div><span class="prompt">$</span>ls posts</div>
+        <div>
+          webtui.md<br />
+          cve-notes.md<br />
+          linux.md
+        </div>
+
+        <br />
+
+        <div>
+          <span class="prompt">$</span><span class="cursor">█</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+
+<row id="statusline" >
+      <span is-="badge" variant-="blue" >NORMAL</span>
+      <span is-="badge" variant-="background1" >
+        <span class="branch-name" >nyanbot</span>
+      </span>
+      <row self-="grow" >
+        <span is-="badge" variant-="background0" >index.html</span>
+      </row>
+      <span is-="badge" variant-="background0" ><a href="https://www.maonie.top/" ><img src="2.gif"></a>←技术博客</span>
+      <span is-="badge" variant-="background0" >utf-8</span>
+      <span is-="badge" variant-="background1" >
+        <span id="percent" >Top</span>
+      </span>
+      <span is-="badge" variant-="blue" ><span id="line" >1</span>:1</span>
+    </row>
+<script>
+  const trail = document.getElementById("cursor-trail");
+
+  document.addEventListener("mousemove", e => {
+    trail.style.setProperty("--x", e.clientX + "px");
+    trail.style.setProperty("--y", e.clientY + "px");
+  });
+</script>
+
+</body>
+</html>

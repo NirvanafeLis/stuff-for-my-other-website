@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-webtui-theme="catppuccin-mocha">
+<head>
+  <meta charset="UTF-8">
+  <title>noir :: cv</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- WebTUI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"/>
+
+  <!-- markdown-it -->
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+
+  <style>
+    :root { --tui-border:#888; }
+    html,body{height:100%;margin:0}
+    body{background:var(--tui-bg)}
+    .window-wrapper{height:100%;padding:1lh;background:#fff;box-sizing:border-box}
+    .window{display:grid;grid-template-rows:auto 1fr auto;height:100%;border:2px solid #000;background:var(--tui-bg)}
+    .header{display:flex;justify-content:space-between;align-items:center;padding:.5lh 1ch;border-bottom:1px solid var(--tui-border)}
+    .header a{text-decoration:none;color:var(--tui-fg);border:1px solid var(--tui-border);padding:.2lh .5ch;border-radius:.25ch}
+    .content{display:grid;grid-template-columns:28ch 1fr;min-height:0}
+    .tree{border-right:1px solid var(--tui-border);padding:.5lh 1ch;overflow-y:auto}
+    .tree ul{list-style:none;padding:0;margin:0}
+    .tree li{cursor:pointer;padding:.1lh .5ch}
+    .tree li.active{background:var(--tui-fg);color:var(--tui-bg)}
+    .viewer{padding:1lh 2ch;overflow-y:auto}
+    .status{padding:.5lh 1ch;border-top:1px solid var(--tui-border)}
+
+    /* Markdown 样式（Butterfly-ish） */
+    .md-body h1{font-size:1.8em;border-bottom:1px solid var(--tui-border);padding-bottom:.2em}
+    .md-body h2{font-size:1.5em;border-bottom:1px solid var(--tui-border);padding-bottom:.2em}
+    .md-body h3{font-size:1.25em;border-bottom:1px solid var(--tui-border);padding-bottom:.2em}
+    .md-body p{line-height:1.75}
+    .md-body blockquote{border-left:4px solid #666;padding-left:1em;color:#aaa}
+    .md-body code{background:#111;padding:.1em .3em;border-radius:4px}
+    .md-body pre{background:#111;padding:1em;overflow-x:auto}
+    .md-body hr{border:0;border-top:1px solid var(--tui-border);margin:1.5em 0}
+    .md-body ul{padding-left:2ch}
+    .md-body li{margin:.3em 0}
+    .md-body img{max-width:100%;border-radius:8px;margin:1em 0}
+    .md-body a{color:#8aadf4;text-decoration:none}
+    .md-body a:hover{text-decoration:underline}
+  </style>
+</head>
+
+<body>
+<div class="window-wrapper">
+  <div class="window">
+
+    <div class="header">
+      <span>~/cv</span>
+      <a href="/">返回</a>
+    </div>
+
+    <div class="content">
+      <nav class="tree">
+        <ul>
+          <li class="active">about.md</li>
+          <li>我死前的记录.md</li>
+          <li>skills.md</li>
+          <li>projects.md</li>
+        </ul>
+      </nav>
+
+      <main class="viewer">
+        <div id="viewer-content" class="md-body">Loading...</div>
+      </main>
+    </div>
+
+    <div class="status">Path: ~/cv/article/about.md</div>
+
+  </div>
+</div>
+
+<script>
+const items = document.querySelectorAll('.tree li');
+const viewer = document.getElementById('viewer-content');
+const status = document.querySelector('.status');
+
+// Hexo-ish markdown-it
+const md = window.markdownit({
+  html: true,
+  linkify: true,
+  typographer: true
+}).use(function(md){
+  md.core.ruler.push('heading_id', state=>{
+    state.tokens.forEach((t,i)=>{
+      if(t.type === 'heading_open'){
+        const inline = state.tokens[i+1];
+        const text = inline.content;
+        const id = text.trim().toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g,'-');
+        t.attrSet('id', id);
+      }
+    });
+  });
+});
+
+function stripFrontMatter(raw){
+  if(raw.startsWith('---')){
+    const end = raw.indexOf('\n---', 3);
+    if(end !== -1){
+      return raw.slice(end + 4);
+    }
+  }
+  return raw;
+}
+
+async function loadFile(name){
+  status.textContent = `Path: ~/cv/article/${name}`;
+  viewer.innerHTML = 'Loading...';
+
+  try{
+    const res = await fetch(`article/${name}`);
+    if(!res.ok) throw new Error();
+    let text = await res.text();
+
+    text = stripFrontMatter(text);      // 模拟 Hexo Front-Matter
+    viewer.innerHTML = md.render(text); // Hexo-ish 渲染
+
+  }catch(e){
+    viewer.textContent = `⚠️ 无法读取 article/${name}`;
+  }
+}
+
+items.forEach(item=>{
+  item.addEventListener('click',()=>{
+    items.forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    loadFile(item.textContent.trim());
+  });
+});
+
+// 默认加载第一个
+loadFile(items[0].textContent.trim());
+</script>
+</body>
+</html>
