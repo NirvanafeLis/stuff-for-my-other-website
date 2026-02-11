@@ -7,7 +7,8 @@
   <link rel="icon" type="image/png" href="favicon.png">
 
   <!-- WebTUI -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"/>
+<link rel="stylesheet" href="assets/webtui-full.css">
+
 
   <!-- markdown-it -->
   <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
@@ -15,16 +16,33 @@
   <style>
     :root { --tui-border:#888; }
     html,body{height:100%;margin:0}
-    body{background:var(--tui-bg)}
-    .window-wrapper{height:100%;padding:1lh;background:#fff;box-sizing:border-box}
-    .window{display:grid;grid-template-rows:auto 1fr auto;height:100%;border:2px solid #000;background:var(--tui-bg)}
+    body{background:rgb(255,255,255);}
+    .window-wrapper{height:100%;padding:1lh;box-sizing:border-box}
+    .window{display:grid;grid-template-rows:auto 1fr auto;height:100%;border:2px solid #000;}
     .header{display:flex;justify-content:space-between;align-items:center;padding:.5lh 1ch;border-bottom:1px solid var(--tui-border)}
     .header a{text-decoration:none;color:var(--tui-fg);border:1px solid var(--tui-border);padding:.2lh .5ch;border-radius:.25ch}
-    .content{display:grid;grid-template-columns:28ch 1fr;min-height:0}
+.content{
+  display:grid;
+  grid-template-columns: var(--tree-w, 28ch) 1fr;
+  min-height:0;
+  transition: grid-template-columns .25s ease;
+}
     .tree{border-right:1px solid var(--tui-border);padding:.5lh 1ch;overflow-y:auto}
     .tree ul{list-style:none;padding:0;margin:0}
     .tree li{cursor:pointer;padding:.1lh .5ch}
-    .tree li.active{background:var(--tui-fg);color:var(--tui-bg)}
+/* 左侧目录：选中项改为淡色背景（不反色） */
+/* 左侧目录：选中项淡色背景（带兼容 fallback） */
+.tree li.active{
+  background: rgba(100,149,237,0.6); /* fallback */
+  color: var(--tui-fg);
+  border-radius: .35ch;
+}
+
+.tree li:hover{
+  background: rgba(100,149,237,0.5);
+  border-radius: .35ch;
+}
+
     .viewer{padding:1lh 2ch;overflow-y:auto}
     .status{padding:.5lh 1ch;border-top:1px solid var(--tui-border)}
 
@@ -42,6 +60,30 @@
     .md-body img{max-width:100%;border-radius:8px;margin:1em 0}
     .md-body a{color:#8aadf4;text-decoration:none}
     .md-body a:hover{text-decoration:underline}
+    /* 折叠状态 */
+.content.tree-collapsed{
+  grid-template-columns: 0 1fr;
+}
+
+.content.tree-collapsed .tree{
+  overflow: hidden;
+  padding: 0;
+  border-right: none;
+}
+#tree-toggle{
+  border:1px solid var(--tui-border);
+  background:transparent;
+  color:var(--tui-fg);
+  cursor:pointer;
+  padding:.1lh .6ch;
+  border-radius:.25ch;
+  font-size:0.9em;
+}
+#tree-toggle:hover{
+  background:var(--tui-fg);
+  color:var(--tui-bg);
+}
+
   </style>
 </head>
 
@@ -50,17 +92,20 @@
   <div class="window">
 
     <div class="header">
-      <span>~/cv</span>
-      <a href="/">返回</a>
+<div style="display:flex;align-items:center;gap:1ch">
+  <button id="tree-toggle" aria-label="Toggle sidebar">目录◀</button>
+  <span>~/cv</span>
+</div>
+<a href="https://maonie.neocities.org/index2" data-home-link>返回主页</a>
+<script src="/assets/window-mode.js"></script>
+
     </div>
 
     <div class="content">
       <nav class="tree">
         <ul>
-          <li class="active">about.md</li>
+          <li class="active">序言.md</li>
           <li>我死前的记录.md</li>
-          <li>skills.md</li>
-          <li>projects.md</li>
         </ul>
       </nav>
 
@@ -134,6 +179,28 @@ items.forEach(item=>{
 
 // 默认加载第一个
 loadFile(items[0].textContent.trim());
+const content = document.querySelector('.content');
+const toggleBtn = document.getElementById('tree-toggle');
+
+function updateToggleIcon(){
+  toggleBtn.textContent =
+    content.classList.contains('tree-collapsed') ? '目录▶' : '目录◀';
+}
+
+toggleBtn.addEventListener('click',()=>{
+  content.classList.toggle('tree-collapsed');
+  updateToggleIcon();
+});
+
+// —— 手机端：默认折叠
+if(window.matchMedia('(max-width: 760px)').matches){
+  content.classList.add('tree-collapsed');
+  updateToggleIcon();
+}
+
 </script>
+<script src="/assets/window-mode.js" defer></script>
+
+
 </body>
 </html>

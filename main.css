@@ -1,0 +1,1123 @@
+
+/* ======================================================================
+   0) 字体 / 全局基础
+   ====================================================================== */
+@font-face{
+  font-family: "dianzhen";
+  src: url("VonwaonBitmap-16px.ttf");
+}
+
+html{ background: transparent; }
+
+/* 背景图放在 html::before（不影响 body 内容层） */
+html::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(rgba(255,255,255,.2), rgba(255,255,255,.2)),
+    url("background pc.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 页面主层（高于 html::before） */
+body{
+  position: relative;
+  z-index: 1;
+
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  display: flex;
+  justify-content: center;
+
+  background: rgb(85,79,79);
+  font-family: "JetBrains Mono", monospace;
+}
+
+
+/* ======================================================================
+   1) 线框布局（page/top/bottom）
+   ====================================================================== */
+.page{
+  width: 70%;
+  min-width: 720px;
+  height: 100vh; /* 竖线到屏幕底部 */
+
+  position: relative;
+  box-sizing: border-box;
+
+  /* statusline 给底部让位（JS 写入 --statusline-h） */
+  padding-bottom: var(--statusline-h, 0px);
+}
+
+/* 左右竖线 */
+.page::before,
+.page::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:#000;
+}
+.page::before{ left:0; }
+.page::after { right:0; }
+
+.top{
+  height: 40%;
+  position: relative;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.dialogue-bar{
+  width: calc(100% - 120px);
+  height: 120px;
+  border: 2px solid #000;
+  box-sizing: border-box;
+}
+
+.avatar{
+  position: absolute;
+  top: 32px;
+  right: 32px;
+
+  width: 96px;
+  height: 96px;
+  border: 2px solid #000;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size: 16px;
+}
+
+.divider{
+  height: 2px;
+  background:#000;
+}
+
+.bottom{
+  height: calc(60% - 2px);
+}
+
+/* 底部横线（在 statusline 上方） */
+.footer-line{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--statusline-h, 0px);
+  height: 2px;
+  background:#000;
+}
+
+/* 你原先这里强行把线条透明（看起来像“线框关闭”）
+   如果你确实需要线条显示，就删掉这个块。 */
+.page::before,
+.page::after,
+.divider,
+.footer-line{
+  background: transparent !important;
+}
+
+/* 小屏适配 */
+@media (max-width: 760px){
+  .page{ width: 100vw; min-width: 0; }
+  .top{ padding: 18px; }
+  .avatar{ top: 18px; right: 18px; }
+}
+
+
+/* ======================================================================
+   2) Statusline（原样保留）
+   ====================================================================== */
+#statusline{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  background-color: var(--background0);
+  border-top: 1px solid var(--background2);
+}
+
+#statusline a{
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: inherit;
+}
+#statusline a:hover{
+  text-decoration: none;
+  opacity: 0.95;
+}
+
+#statusline [variant-="blue"] a{ color: var(--accent); }
+#statusline [variant-="background0"] a{ color: var(--foreground0); }
+#statusline [variant-="background1"] a{ color: var(--foreground1); }
+
+/* 这段是你自定义的属性选择器工具层（保持不动） */
+@layer utils{
+  column,[is-~=column]{ flex-direction: column; }
+  row,column,[is-~=row],[is-~=column]{
+    display: flex;
+    &[gap-~="1"]{ column-gap: 1ch; row-gap: 1lh; }
+    &[gap-~="2"]{ column-gap: 2ch; row-gap: 2lh; }
+    &[gap-~="4"]{ column-gap: 4ch; row-gap: 4lh; }
+    &[self-~=grow]{ flex-grow: 1; }
+    &[self-~="!grow"]{ flex-grow: 0; }
+    &[self-~=shrink]{ flex-shrink: 1; }
+    &[self-~="!shrink"]{ flex-shrink: 0; }
+    &[self-~="!basis"]{ flex-basis: 0; }
+    &[align-^=start]{ align-items: flex-start; }
+    &[align-^=end]{ align-items: flex-end; }
+    &[align-^=center]{ align-items: center; }
+    &[align-^=stretch]{ align-items: stretch; }
+    &[align-$=between]{ justify-content: space-between; }
+    &[align-$=start]{ justify-content: flex-start; }
+    &[align-$=end]{ justify-content: flex-end; }
+    &[align-$=center]{ justify-content: center; }
+  }
+}
+
+
+/* ======================================================================
+   3) 通用：hidden 保险
+   ====================================================================== */
+[hidden]{ display: none !important; }
+
+
+/* ======================================================================
+   4) Boot / Splash Overlay（开机层）
+   ====================================================================== */
+.xp-splash{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  background: #08246d;
+  opacity: 1;
+  overflow: hidden;
+}
+
+/* 扫描线（背景层） */
+.xp-splash::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index: 0;
+  pointer-events:none;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,.18) 0px,
+    rgba(0,0,0,.18) 2px,
+    rgba(255,255,255,.02) 2px,
+    rgba(255,255,255,.02) 6px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* 噪点/网格 */
+.xp-splash::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index: 0;
+  pointer-events:none;
+
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,.04) 0px,
+      rgba(255,255,255,.04) 1px,
+      rgba(0,0,0,.03) 2px,
+      rgba(0,0,0,.03) 3px
+    ),
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.03) 0px,
+      rgba(0,0,0,.03) 1px,
+      rgba(255,255,255,.02) 2px,
+      rgba(255,255,255,.02) 3px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.22;
+}
+
+/* ======================================================================
+   5) 通用 XP/Win9x 窗口皮肤（Splash/Boot/Login 共用）
+   ====================================================================== */
+.xp-window{
+  position: relative; /* 窗口在扫描线上层 */
+  z-index: 1;
+
+  width: min(560px, calc(100vw - 32px));
+  background: #d6d6d6;
+
+  border: 1px solid #0b2a7a;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+
+/* Win9x 变体（覆盖 xp-window 的边框/字体/标题栏） */
+.xp-window.win9x{
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-top-color: #dfdfdf;
+  border-left-color: #dfdfdf;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  font-family: "MS Sans Serif", sans-serif;
+}
+
+.xp-titlebar{
+  height: 34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 0 8px;
+
+  color:#fff;
+  background: linear-gradient(#2b66d9, #1f49b6);
+  border-bottom: 1px solid #0b2a7a;
+}
+
+/* Win9x 标题栏覆盖 */
+.win9x .xp-titlebar{
+  background: #000080;
+  height: auto;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+.xp-title{
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+
+.xp-body{
+  padding: 18px;
+  background: #ece9d8;
+
+  border-top: 1px solid rgba(255,255,255,.6);
+  border-left: 1px solid rgba(255,255,255,.6);
+  border-right: 1px solid rgba(0,0,0,.15);
+  border-bottom: 1px solid rgba(0,0,0,.15);
+}
+
+/* Boot/Splash 内容 */
+.xp-hero{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.xp-logo{
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+
+  background:
+    radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0) 55%),
+    linear-gradient(135deg, #3aa0ff, #005ad5);
+
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+.xp-h1{
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color:#1a1a1a;
+}
+
+.xp-sub{
+  font-size: 12px;
+  color:#3b3b3b;
+}
+
+.xp-progress{
+  height: 16px;
+  padding: 2px;
+
+  background: #fff;
+  border: 1px solid #7f7f7f;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.xp-progress-bar{
+  height: 100%;
+  width: 0%;
+  transition: width .18s ease;
+
+  background: repeating-linear-gradient(
+    90deg,
+    #1fb14f 0px,
+    #1fb14f 12px,
+    #2ddc6d 12px,
+    #2ddc6d 16px
+  );
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+.xp-progress-text{
+  margin-top: 8px;
+  display:flex;
+  justify-content: space-between;
+
+  font-size: 12px;
+  color:#2b2b2b;
+}
+.xp-version{ opacity: .75; }
+
+/* Boot window 宽度别名（保留你原本类名） */
+.boot-window{ width: min(560px, calc(100vw - 32px)); }
+
+/* Boot 淡入淡出工具类 */
+.boot-fade{ opacity: 0; transition: opacity .22s ease; }
+.boot-fade-in{ opacity: 1; transition: opacity .22s ease; }
+
+
+/* ======================================================================
+   6) XP Start 按钮（统一只保留一份）
+   ====================================================================== */
+.xp-start-btn{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+
+  padding: 2px 10px 2px 8px;
+  border-radius: 12px;
+
+  border: 1px solid rgba(0,0,0,.35);
+  background: linear-gradient(#62d45a, #1f8d2b);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 1px 0 rgba(0,0,0,.2);
+
+  color:#fff !important;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0,0,0,.35);
+  user-select:none;
+}
+
+.xp-start-btn:hover{ filter: brightness(1.03); }
+.xp-start-btn:active{
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,.25);
+}
+
+.xp-start-orb{
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+
+  background: url("https://maonie.neocities.org/favicon.png") center/cover no-repeat;
+  border: 1px solid rgba(0,0,0,.25);
+}
+
+
+/* ======================================================================
+   7) XP Start Menu（开始菜单）
+   ====================================================================== */
+.xp-start{
+  position: fixed;
+  z-index: 2500;
+
+  width: 390px;
+  overflow: hidden;
+
+  border-radius: 8px 8px 6px 6px;
+  border: 1px solid #123a8a;
+  background: linear-gradient(#2f66d9, #1f49b6);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.55);
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+
+.xp-start-top{
+  height: 56px;
+  padding: 10px 12px;
+
+  display:flex;
+  align-items:center;
+  gap: 10px;
+
+  color:#fff;
+  background: linear-gradient(#3b79ff, #1f49b6);
+  border-bottom: 1px solid rgba(0,0,0,.25);
+}
+
+.xp-userpic{
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,0) 60%),
+    linear-gradient(135deg, #ffd36b, #ff7a00);
+
+  border: 1px solid rgba(0,0,0,.25);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+.xp-username{
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+
+.xp-start-cols{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  background: #ece9d8;
+}
+
+.xp-col-left{
+  padding: 10px 8px;
+  background: #fff;
+  border-right: 1px solid rgba(0,0,0,.18);
+}
+
+.xp-col-right{
+  padding: 10px 8px;
+  background: #ece9d8;
+
+  display:flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.xp-item{
+  width: 100%;
+  padding: 8px 8px;
+
+  display:flex;
+  align-items:center;
+  gap: 10px;
+
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+
+  text-align: left;
+  cursor: pointer;
+
+  font-size: 13px;
+  color:#111;
+}
+
+.xp-item-right{ font-weight: 600; }
+
+.xp-ico{
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,0) 60%),
+    linear-gradient(135deg, #7bb6ff, #2a66d9);
+
+  border: 1px solid rgba(0,0,0,.18);
+}
+
+.xp-item:hover,
+.xp-item:focus-visible{
+  outline: none;
+  background: linear-gradient(#2f7dff, #1f49b6);
+  color:#fff;
+}
+
+.xp-item:hover .xp-ico,
+.xp-item:focus-visible .xp-ico{
+  background: linear-gradient(135deg, #fff, #9fd0ff);
+}
+
+.xp-sep{
+  height: 1px;
+  margin: 6px 4px;
+  background: rgba(0,0,0,.15);
+}
+
+.xp-shutdown{
+  margin-top: auto;
+  width: 100%;
+  padding: 8px 10px;
+
+  display:flex;
+  align-items:center;
+  gap: 10px;
+
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,.25);
+  background: linear-gradient(#7585b9, #5e38eb);
+}
+
+.xp-shutdown:hover{
+  background: linear-gradient(#fffbf1, #ffd9a3);
+}
+
+.xp-shutdown-ico{
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: linear-gradient(#ff6f6f, #d32727);
+  border: 1px solid rgba(0,0,0,.25);
+}
+
+
+/* ======================================================================
+   8) Desktop 图标区
+   ====================================================================== */
+.desk{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap: 18px;
+
+  padding: 18px 0 10px;
+}
+
+.desk-icon{
+  width: 92px;
+  height: 98px;
+  padding: 6px 6px 8px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap: 8px;
+
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  font-family: "JetBrains Mono", monospace;
+  color:#111;
+}
+
+.desk-icon img{
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.desk-icon span{
+  font-size: 12px;
+  line-height: 1.15;
+  text-align: center;
+  word-break: break-word;
+}
+
+.desk-icon:hover{ background: rgba(255,255,255,.15); }
+.desk-icon:focus-visible{
+  outline: 1px dashed #000;
+  outline-offset: 2px;
+}
+
+
+/* ======================================================================
+   9) App Window（桌面打开的应用窗口）
+   ====================================================================== */
+.xp-app{
+  position: fixed;
+  z-index: 3000;
+
+  width: 860px;
+  height: 560px;
+
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+
+  border-radius: 6px;
+  overflow: hidden;
+
+  border: 1px solid #0b2a7a;
+  background: #d6d6d6;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  touch-action: none;
+}
+
+/* 背景遮罩（你是透明，不挡点击） */
+#app-backdrop{
+  position: fixed;
+  inset: 0;
+  z-index: 2999;
+
+  background: transparent;
+  pointer-events: none;
+}
+
+.xp-app-titlebar{
+  height: 34px;
+  padding: 0 8px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  color:#fff;
+  background: linear-gradient(#2b66d9,#1f49b6);
+  border-bottom: 1px solid #0b2a7a;
+
+  user-select:none;
+  cursor: move;
+}
+
+.xp-app-title{
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+
+.xp-app-controls{ display:flex; gap: 6px; }
+
+.xp-app-btn{
+  width: 22px;
+  height: 18px;
+
+  border-radius: 2px;
+  cursor: pointer;
+
+  border: 1px solid rgba(0,0,0,.35);
+  border-color:#8a2b2b;
+
+  background: linear-gradient(#ffb0b0,#e36a6a);
+  color:#300;
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+  line-height: 1;
+}
+
+.xp-app-body{
+  height: calc(100% - 34px);
+
+  background:#ece9d8;
+  border-top: 1px solid rgba(255,255,255,.6);
+  border-left: 1px solid rgba(255,255,255,.6);
+  border-right: 1px solid rgba(0,0,0,.15);
+  border-bottom: 1px solid rgba(0,0,0,.15);
+}
+
+.xp-app-body iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* 缩放把手 */
+.rs{ position:absolute; z-index: 5; background: transparent; }
+.rs-n, .rs-s{ left: 8px; right: 8px; height: 6px; }
+.rs-e, .rs-w{ top: 40px; bottom: 8px; width: 6px; }
+
+.rs-n{ top: 0; cursor: n-resize; }
+.rs-s{ bottom: 0; cursor: s-resize; }
+.rs-e{ right: 0; cursor: e-resize; }
+.rs-w{ left: 0; cursor: w-resize; }
+
+.rs-ne, .rs-nw, .rs-se, .rs-sw{ width: 10px; height: 10px; }
+.rs-ne{ top: 0; right: 0; cursor: ne-resize; }
+.rs-nw{ top: 0; left: 0; cursor: nw-resize; }
+.rs-se{ bottom: 0; right: 0; cursor: se-resize; }
+.rs-sw{ bottom: 0; left: 0; cursor: sw-resize; }
+
+
+/* ======================================================================
+   10) Fake Notification（右下角通知）
+   ====================================================================== */
+.fake-notification{
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--statusline-h, 0px) + 18px);
+  z-index: 2600;
+
+  width: 280px;
+
+  background: #f3f3f3;
+  border: 2px solid #4a6ea9;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.25);
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+}
+
+.fake-notification-header{
+  padding: 4px 6px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+
+  color:#fff;
+  background: linear-gradient(#6b8fd6,#4a6ea9);
+}
+
+.fake-notification-header button{
+  background: none;
+  border: none;
+  color:#fff;
+  cursor:pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.fake-notification-body{
+  padding: 8px;
+  color:#000;
+  background:#fffbe6;
+  border-top: 1px solid rgba(255,255,255,.7);
+}
+
+.fake-notification.show{
+  animation: notifyPop .18s ease-out;
+}
+
+@keyframes notifyPop{
+  from{ transform: translateY(10px); opacity: 0; }
+  to  { transform: translateY(0); opacity: 1; }
+}
+
+
+/* ======================================================================
+   11) Shutdown（关机蓝屏 + 黑屏）
+   ====================================================================== */
+.shutdown-blue{
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+
+  background: #0a2a86;
+  display: grid;
+  place-items: center;
+}
+
+.shutdown-blue-inner{
+  width: min(760px, calc(100vw - 40px));
+  color:#fff;
+  text-align:left;
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+}
+
+.shutdown-blue-title{
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: .2px;
+}
+
+.shutdown-blue-sub{
+  font-size: 14px;
+  opacity: .95;
+  margin-bottom: 18px;
+}
+
+.shutdown-blue-bar{
+  height: 18px;
+  padding: 2px;
+
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.35);
+}
+
+.shutdown-blue-bar > div{
+  height: 100%;
+  width: 0%;
+  transition: width .18s ease;
+
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,.85) 0px,
+    rgba(255,255,255,.85) 14px,
+    rgba(255,255,255,.55) 14px,
+    rgba(255,255,255,.55) 18px
+  );
+}
+
+.shutdown-blue-meta{
+  margin-top: 10px;
+  display:flex;
+  justify-content: space-between;
+
+  font-size: 14px;
+  opacity: .95;
+}
+
+.shutdown-screen{
+  position: fixed;
+  inset: 0;
+  z-index: 4500;
+
+  background: #000;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.shutdown-text{
+  margin-bottom: 18px;
+  padding: 0 18px;
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 28px;
+  color: #ff9f1a;
+}
+
+.shutdown-home-btn{
+  padding: 8px 16px;
+
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+
+  color: #000;
+  background: #ff9f1a;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 4px;
+  text-decoration: none;
+}
+.shutdown-home-btn:hover{ opacity: .9; }
+
+
+/* ======================================================================
+   12) Retro Pixel / CRT（关机风格叠加）
+   ====================================================================== */
+.retro-pixel{
+  font-family: "dianzhen","JetBrains Mono",monospace !important;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  image-rendering: pixelated;
+  filter: contrast(1.15) saturate(.85);
+}
+
+.retro-pixel::before,
+.retro-pixel::after{
+  content:"";
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  pointer-events:none;
+}
+
+.retro-pixel::before{
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,.18) 0px,
+    rgba(0,0,0,.18) 2px,
+    rgba(255,255,255,.02) 2px,
+    rgba(255,255,255,.02) 6px
+  );
+  mix-blend-mode: multiply;
+  opacity: .55;
+}
+
+.retro-pixel::after{
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,.04) 0px,
+      rgba(255,255,255,.04) 1px,
+      rgba(0,0,0,.03) 2px,
+      rgba(0,0,0,.03) 3px
+    ),
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.03) 0px,
+      rgba(0,0,0,.03) 1px,
+      rgba(255,255,255,.02) 2px,
+      rgba(255,255,255,.02) 3px
+    );
+  mix-blend-mode: overlay;
+  opacity: .25;
+}
+
+/* Retro 覆盖：蓝屏 */
+.shutdown-blue.retro-pixel{ background: #08246d; }
+
+.shutdown-blue.retro-pixel .shutdown-blue-title{
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.35);
+}
+
+.shutdown-blue.retro-pixel .shutdown-blue-sub{
+  letter-spacing: 1px;
+  opacity: .95;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.35);
+}
+
+.shutdown-blue.retro-pixel .shutdown-blue-bar{
+  height: 22px;
+  padding: 3px;
+
+  border: 2px solid rgba(255,255,255,.55);
+  background: rgba(0,0,0,.15);
+}
+
+.shutdown-blue.retro-pixel .shutdown-blue-bar > div{
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,.95) 0px,
+    rgba(255,255,255,.95) 10px,
+    rgba(255,255,255,.55) 10px,
+    rgba(255,255,255,.55) 14px
+  );
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.12);
+}
+
+/* Retro 覆盖：黑屏 */
+.shutdown-screen.retro-pixel{ background: #000; }
+
+.shutdown-screen.retro-pixel .shutdown-text{
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.6);
+}
+
+.shutdown-screen.retro-pixel .shutdown-home-btn{
+  font-family: "dianzhen","JetBrains Mono",monospace !important;
+  letter-spacing: 1px;
+  border-radius: 0;
+  border: 2px solid rgba(255,255,255,.25);
+}
+
+
+/* ======================================================================
+   13) Login（Ventablack 风格，严格 scoped 到 #panel-login）
+   ====================================================================== */
+#panel-login{ display: block; }
+
+/* 取消第二层“窗口感”（让它贴合 xp-body） */
+#panel-login .vb-login-window{
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  width: auto;
+  margin: 0;
+}
+
+#panel-login .vb-title-bar{
+  margin: 0 0 10px 0;
+}
+
+/* 左侧 key 图占位：给容器 padding */
+#panel-login .vb-tip2{
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-height: 64px;
+}
+
+/* 提示文字 */
+#panel-login .vb-tip{
+  margin: 0 0 15px 0 !important;
+}
+
+/* 输入组 */
+#panel-login .vb-input-group{
+  margin: 0 0 15px 0 !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#panel-login .vb-input-group label{
+  display:block;
+  margin-bottom: 3px !important;
+  font-size: 16px;
+  color:#000;
+}
+
+#panel-login .vb-input-group input{
+  display:block;
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 18px;
+
+  color:#000;
+  background:#fff;
+
+  border: 2px solid;
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-right-color: #dfdfdf;
+  border-bottom-color: #dfdfdf;
+}
+
+#panel-login #login-password{ cursor: not-allowed; }
+
+/* 按钮组：右对齐 + 右侧留白 */
+#panel-login .vb-button-group{
+  display:flex !important;
+  justify-content:flex-end !important;
+  gap: 10px !important;
+  margin-top: 20px !important;
+  padding-right: 20px !important; /* 可按需删 */
+}
+
+#panel-login .vb-button-group button{
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 12px;
+
+  padding: 5px 15px;      /* ✅ 决定体型 */
+  min-width: 70px;        /* ✅ 保证 Win98 宽度 */
+
+  background: #c0c0c0;
+  color: #000;
+
+  border: 2px solid;
+  border-top-color: #dfdfdf;
+  border-left-color: #dfdfdf;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+
+  border-radius: 0;
+}
+
+#panel-login .vb-button-group button:hover,
+#panel-login .vb-button-group button:focus,
+#panel-login .vb-button-group button:focus-visible{
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+#panel-login .vb-button-group button:active{
+  border-top-color: #808080 !important;
+  border-left-color: #808080 !important;
+  border-right-color: #dfdfdf !important;
+  border-bottom-color: #dfdfdf !important;
+}
+
+/* 清除浮动影响（保险） */
+#panel-login .vb-login-window::after{
+  content:"";
+  display:block;
+  clear: both;
+}

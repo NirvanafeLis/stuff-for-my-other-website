@@ -1,201 +1,247 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-webtui-theme="catppuccin-mocha">
+<html lang="zh-CN" data-webtui-theme="monokai">
 <head>
-  <meta charset="UTF-8">
-  <title>noir :: cv</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8" />
+<title>nekobot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- WebTUI 最新 full.css -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"
-  />
-
-  <!-- 页面布局和自定义样式 -->
-  <style>
-    :root {
-      --tui-border: #888; /* 提高黑框可见度 */
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
-    body {
-      padding: 0;
-      background: var(--tui-bg);
-    }
-
-    /* 外层黑框容器 */
-    .window-wrapper {
-      height: 100%;
-      padding: 1lh;
-      background: #ffffff; /* 黑框背景 */
-      box-sizing: border-box;
-    }
-
-    /* 内部 TUI window */
-    .window {
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      height: 100%;
-      background: var(--tui-bg);
-      
-      border: 2px solid #000; /* 黑框边框 */
-    }
-
-    /* 顶部 header 栏 */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5lh 1ch;
-      border-bottom: 1px solid var(--tui-border);
-    }
-
-    .header a {
-      text-decoration: none;
-      color: var(--tui-fg);
-      border: 1px solid var(--tui-border);
-      padding: 0.2lh 0.5ch;
-      border-radius: 0.25ch;
-      cursor: pointer;
-      background: var(--tui-bg);
-    }
-
-    /* 状态栏 */
-    .status {
-      padding: 0.5lh 1ch;
-      border-top: 1px solid var(--tui-border);
-      border-bottom: none;
-    }
-
-    /* 主体内容 */
-    .content {
-      display: grid;
-      grid-template-columns: 28ch 1fr;
-      min-height: 0;
-    }
-
-    /* 左侧文件树 */
-    .tree {
-      border-right: 1px solid var(--tui-border);
-      padding: 0.5lh 1ch;
-      overflow-y: auto;
-      min-height: 0;
-    }
-
-    .tree ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .tree li {
-      cursor: pointer;
-      padding: 0.1lh 0.5ch;
-    }
-
-    .tree li.active {
-      background: var(--tui-fg);
-      color: var(--tui-bg);
-    }
-
-    /* 右侧内容 */
-    .viewer {
-      padding: 1lh 2ch;
-      overflow-y: auto;
-      min-height: 0;
-    }
-
-    .panel {
-      display: none;
-    }
-
-    .panel.active {
-      display: block;
-    }
-
-    pre {
-      margin: 0;
-      white-space: pre-wrap;
-    }
-  </style>
+<!-- WebTUI（用于 statusline badge） -->
+<link rel="stylesheet" href="assets/webtui-full.css">
+<link rel="stylesheet" href="main.css">
 </head>
 
 <body>
-  <div class="window-wrapper">
-    <div class="window">
-      <!-- 顶部 -->
-      <div class="header">
-        <span>~/cv</span>
-        <a href="https://maonie.neocities.org/">返回</a>
+
+<!-- Boot Overlay: Splash + Login (same overlay, no flash) -->
+<div id="splash-screen" class="xp-splash" aria-hidden="false">
+  <div class="xp-window win9x boot-window">
+    <div class="xp-titlebar">
+      <div class="xp-title">nekobot</div>
+      <div class="xp-controls" aria-hidden="true"></div>
+    </div>
+
+    <div class="xp-body boot-body" id="boot-body">
+      <!-- Splash panel -->
+      <div id="panel-splash">
+        <div class="xp-hero">
+          <div class="xp-logo" aria-hidden="true"></div>
+          <div>
+            <div class="xp-h1">Starting nekobot…</div>
+            <div class="xp-sub" id="xp-status-text">加载个人设置...</div>
+          </div>
+        </div>
+
+        <div class="xp-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="xp-progress-bar" id="splash-progress-bar"></div>
+        </div>
+
+        <div class="xp-progress-text">
+          <span id="splash-progress-text">0%</span>
+          <span class="xp-version">v0.3.9</span>
+        </div>
       </div>
 
-      <!-- 主体 -->
-      <div class="content">
-        <!-- 左侧文件树 -->
-        <nav class="tree">
-          <ul>
-            <li class="active" data-target="about">about.md</li>
-            <li data-target="education">education.md</li>
-            <li data-target="skills">skills.md</li>
-            <li data-target="projects">projects.md</li>
-          </ul>
-        </nav>
+<!-- Login panel (hidden by default; JS切换显示，避免闪) -->
+<div id="panel-login" hidden aria-hidden="true">
+  <div class="vb-login-window">
 
-        <!-- 右侧内容 -->
-        <main class="viewer">
-          <section id="about" class="panel active">
-<pre># about
-  总之先说声你好
-  还在编写中 剩下几个md都是空的
-</pre>
-          </section>
+    <div class="vb-tip2">
+      <div class="vb-tip">
+首先 欢迎来到我的网页！<br>
+该网页<b>正在建设中</b> 有大部分内容无法使用<br> 
+推荐1920*1080分辨率以下的用户用<b>F11全屏</b>的方式观看 获取最佳体验<br>
+可能会包含 较亮/闪光的图片 有光敏癫痫相关疾病史的人士还请注意<br>
+接下来 给自己起个名 进入网页吧<br>
 
-          <section id="education" class="panel">
-<pre># Education
-</pre>
-          </section>
+      </div>
+    </div>
 
-          <section id="skills" class="panel">
-<pre># Skills
-</pre>
-          </section>
+    <div class="vb-input-group">
+      <label for="login-username">Username:</label>
+      <input type="text" id="login-username" placeholder="请输入用户名" autocomplete="off" spellcheck="false">
+    </div>
 
-          <section id="projects" class="panel">
-<pre># Projects
-</pre>
-          </section>
-        </main>
+    <div class="vb-input-group">
+      <label for="login-password">Password:</label>
+      <input type="text" id="login-password" readonly value="*******" tabindex="-1">
+    </div>
+
+    <div class="vb-button-group">
+      <button id="login-btn" type="button">OK</button>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- 页面 -->
+  <div class="page">
+    <section class="top">
+      <div class="dialogue-bar">你好 <span data-username>[user_name_here]</span> 这是一个测试页面 大部分都还没写完...<br>返回主页之前请通过右下角菜单关机</div>
+      <div class="avatar">(｡･∀･)ﾉ</div>
+    </section>
+<script src="/oneko/oneko.js"></script>
+  
+    <div class="divider"></div>
+
+
+    <section class="bottom">
+      <div class="desk">
+        <button class="desk-icon" type="button" data-app="about">
+          <img src="/icon/about.gif" alt="about">
+          <span>关于页面</span>
+        </button>
+
+        <button class="desk-icon" type="button" data-app="option">
+          <img src="/icon/option.gif" alt="option">
+          <span>设置</span>
+        </button>
+
+        <button class="desk-icon" type="button" data-app="cv">
+          <img src="/icon/cv.gif" alt="cv">
+          <span>随便写点</span>
+        </button>
+
+        <button class="desk-icon" type="button" data-app="log">
+          <img src="/icon/log.gif" alt="log">
+          <span>更新日志</span>
+        </button>
+          
+      </div>
+    </section>
+  </div>
+
+ 
+  <div id="app-backdrop" hidden></div>
+
+  <div id="app-window" class="xp-app" hidden aria-hidden="true">
+    <div class="xp-app-titlebar" id="app-drag-handle">
+      <div class="xp-app-title" id="app-title">App</div>
+      <div class="xp-app-controls">
+        <button type="button" class="xp-app-btn" data-win="close" aria-label="Close">×</button>
+      </div>
+    </div>
+
+    <div class="xp-app-body">
+      <iframe id="app-frame" title="app frame" src="about:blank"></iframe>
+    </div>
+
+    <i class="rs rs-n"  data-rs="n"></i>
+    <i class="rs rs-e"  data-rs="e"></i>
+    <i class="rs rs-s"  data-rs="s"></i>
+    <i class="rs rs-w"  data-rs="w"></i>
+    <i class="rs rs-ne" data-rs="ne"></i>
+    <i class="rs rs-nw" data-rs="nw"></i>
+    <i class="rs rs-se" data-rs="se"></i>
+    <i class="rs rs-sw" data-rs="sw"></i>
+  </div>
+
+  <!-- statusline -->
+  <row id="statusline">
+    <span>
+      <a href="javascript:void(0)" id="xp-menu-btn" class="xp-start-btn" aria-haspopup="true" aria-expanded="false">
+        <span class="xp-start-orb" aria-hidden="true"></span>
+        菜单
+      </a>
+    </span>
+  </row>
+
+  <!-- XP 开始菜单 -->
+  <div id="xp-start-menu" class="xp-start" hidden role="menu" aria-label="XP Start Menu">
+    <div class="xp-start-top">
+      <div class="xp-userpic" aria-hidden="true"></div>
+      <div class="xp-username" data-username>[user_name_here]</div>
+    </div>
+
+    <div class="xp-start-cols">
+      <!-- 左栏：常用/程序 -->
+      <div class="xp-col xp-col-left" role="none">
+        <button class="xp-item" role="menuitem" id="xp-item-home">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text"><del>返回主页</del></span>
+        </button>
+
+        <button class="xp-item" role="menuitem" id="xp-item-cv">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text">随笔 /cv</span>
+        </button>
+
+        <div class="xp-sep"></div>
+
+        <button class="xp-item" role="menuitem" id="xp-item-log">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text">更新日志</span>
+        </button>
+
+        <button class="xp-item" role="menuitem" id="xp-item-links">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text">友情链接</span>
+        </button>
       </div>
 
-      <!-- 状态栏 -->
-      <div class="status">
-        Path: ~/cv/about.md
+      <!-- 右栏：系统项 -->
+      <div class="xp-col xp-col-right" role="none">
+        <button class="xp-item xp-item-right" role="menuitem" id="xp-item-settings">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text">设置</span>
+        </button>
+
+        <button class="xp-item xp-item-right" role="menuitem" id="xp-item-about">
+          <span class="xp-ico" aria-hidden="true"></span>
+          <span class="xp-text">关于</span>
+        </button>
+
+        <div class="xp-sep"></div>
+
+        <button class="xp-shutdown" role="menuitem" id="xp-shutdown-btn">
+          <span class="xp-shutdown-ico" aria-hidden="true"></span>
+          关机
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- 左侧点击切换右侧内容 -->
-  <script>
-    const items = document.querySelectorAll('.tree li');
-    const panels = document.querySelectorAll('.panel');
-    const status = document.querySelector('.status');
+  <!-- 关机 -->
+  <div id="shutdown-blue" class="shutdown-blue retro-pixel" hidden>
+    <div class="shutdown-blue-inner">
+      <div class="shutdown-blue-title">正在关闭 nekobot…</div>
+      <div class="shutdown-blue-sub" id="shutdown-blue-text">正在保存您的设置…</div>
 
-    items.forEach(item => {
-      item.addEventListener('click', () => {
-        items.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
+      <div class="shutdown-blue-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="shutdown-blue-bar-inner"></div>
+      </div>
 
-        panels.forEach(p => p.classList.remove('active'));
-        document.getElementById(item.dataset.target).classList.add('active');
+      <div class="shutdown-blue-meta">
+        <span id="shutdown-blue-pct">0%</span>
+        <span>Powering down</span>
+      </div>
+    </div>
+  </div>
+  <div id="shutdown-screen" class="shutdown-screen retro-pixel" hidden>
+    <div>
+      <div class="shutdown-text">现在可以安全地关闭计算机了。</div>
+      <a class="shutdown-home-btn" href="https://maonie.neocities.org/">返回主页</a>
+    </div>
+  </div>
+  
+<script src="app.js" defer></script>
 
-        status.textContent = `Path: ~/cv/${item.textContent}`;
-      });
-    });
-  </script>
+<!-- 伪通知：废弃“返回主页”按钮时弹出 -->
+<div id="fake-notification" class="fake-notification" hidden aria-hidden="true">
+  <div class="fake-notification-header">
+    <strong>系统提示</strong>
+    <button id="fake-notification-close" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="fake-notification-body" id="fake-notification-text">
+    本功能已停用。
+  </div>
+</div>
+
 </body>
 </html>

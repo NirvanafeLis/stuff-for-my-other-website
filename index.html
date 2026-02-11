@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="favicon.png">
   <!-- WebTUI -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@webtui/css@0.1.6/dist/full.css"
-  />
+<link rel="stylesheet" href="assets/webtui-full.css">
+
   <style>
+  /* ===== Neocities draggable button box (final) ===== */
 
 
 /* 保证内容层在上面 */
@@ -19,10 +18,12 @@ body {
   z-index: 1;
 }
 
-          @font-face {
-            font-family: "dianzhen";
-            src:url("凤凰点阵体 12px.ttf");
-        }        html {
+@font-face {
+  font-family: "dianzhen";
+  src: url("VonwaonBitmap-16px.ttf");
+}
+
+html {
   background: transparent;
 }
 
@@ -32,14 +33,12 @@ html::before {
   position: fixed;
   inset: 0;
   z-index: 0;
-
   background:
     linear-gradient(
       rgba(255, 255, 255, 0.8),
       rgba(255, 255, 255, 0.8)
     ),
     url("background.jpg");
-
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -51,136 +50,126 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-
   position: relative;
   z-index: 1;      /* 关键：内容层 */
   overflow-x: hidden;
 }
-
-
-
 
 .container {
   max-width: 1100px;
   width: 100%;
   margin: auto;
   padding: 3lh 3ch 5lh;
-
   background: transparent;
   backdrop-filter: none;
-
   border-radius: 10px;
 }
 
+/* Hero 布局 */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 4ch;
+  align-items: center;
+}
 
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
 
+/* 左侧文案 */
+.intro h1 {
+  font-size: 2.2rem;
+  margin: 0;
+}
 
-    /* Hero 布局 */
-    .hero {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 4ch;
-      align-items: center;
-    }
+.intro h2 {
+  font-size: 1.2rem;
+  font-weight: normal;
+  color: var(--foreground1);
+  margin-top: .5lh;
+}
 
-    @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-    }
+.intro p {
+  margin-top: 1lh;
+  max-width: 40ch;
+  color: var(--foreground1);
+}
 
-    /* 左侧文案 */
-    .intro h1 {
-      font-size: 2.2rem;
-      margin: 0;
-    }
+.intro a {
+  display: inline-block;
+  margin-top: 1.5lh;
+  color: var(--accent);
+  text-decoration: none;
+}
 
-    .intro h2 {
-      font-size: 1.2rem;
-      font-weight: normal;
-      color: var(--foreground1);
-      margin-top: .5lh;
-    }
-
-    .intro p {
-      margin-top: 1lh;
-      max-width: 40ch;
-      color: var(--foreground1);
-    }
-
-    .intro a {
-      display: inline-block;
-      margin-top: 1.5lh;
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .intro a:hover {
-      text-decoration: underline;
-    }
+.intro a:hover {
+  text-decoration: underline;
+}
 
 .terminal {
-  background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+  background: rgba(0, 0, 0, 0.8); /* 半透明黑色背景 */
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
-
 }
 
-
-    .terminal-header {
-      display: flex;
-      align-items: center;
-      gap: .5ch;
-      padding: .6lh 1ch;
-      border-bottom: 1px solid var(--foreground2);
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: .5ch;
+  padding: .6lh 1ch;
+  border-bottom: 1px solid var(--foreground2);
   background: rgba(255, 255, 255, 0.5); /* 半透明黑色背景 */
-    }
+}
 
-    .control {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
+.control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
 
-    .red { background: var(--red); }
-    .yellow { background: var(--yellow); }
-    .green { background: var(--green); }
+.red { background: var(--red); }
+.yellow { background: var(--yellow); }
+.green { background: var(--green); }
 
-    .terminal-title {
-      margin-left: 1ch;
-      color: var(--foreground1);
-      font-size: .9rem;
-    }
+.terminal-title {
+  margin-left: 1ch;
+  color: var(--foreground1);
+  font-size: .9rem;
+}
 
-    .terminal-body {
-  color: var(--foreground0);
-      padding: 1lh 2ch;
-      line-height: 1.6;
-      font-size: .95rem;
-    }
+.terminal-body {
+  color: rgb(57 , 255 , 20);
+  padding: 1lh 2ch;
+  line-height: 1.6;
+  font-size: .95rem;
+}
 
-    .prompt {
-      color: var(--accent);
-      margin-right: 1ch;
-    }
+.prompt {
+  color: rgb(57 , 255 , 20);
+  margin-right: 1ch;
+}
 
-    .cursor {
-      animation: blink 1s steps(1) infinite;
-    }
+.cursor {
+  animation: blink 1s steps(1) infinite;
+}
 
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
+@keyframes blink {
+  50% { opacity: 0; }
+}
 
 #statusline {
-    position: fixed;
-    bottom: 0px;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background-color: var(--background0);
-    border-top: 1px solid var(--background2)
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--background0);
+  border-top: 1px solid var(--background2)
 }
+
 #statusline img {
   height: 1lh; /* 与行高匹配 */
   width: auto;
@@ -188,270 +177,332 @@ body {
   opacity: 0.9;
   transition: opacity 0.2s ease;
 }
-#blue
-{
-    color: rgb(0, 116, 151);
+
+#blue {
+  color: rgb(0, 116, 151);
+}
+
+/* 新增：状态栏链接样式 - 去除下划线并设置颜色 */
+#statusline a {
+  text-decoration: none;  /* 去除下划线 */
+  color: inherit;         /* 继承父元素颜色 */
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#statusline a:hover {
+  text-decoration: none;  /* 悬停时也保持无下划线 */
+  opacity: 0.8;          /* 悬停时轻微透明效果 */
+}
+
+/* 针对不同徽章设置链接颜色 */
+#statusline [variant-="blue"] a {
+  color: var(--accent);   /* 蓝色徽章使用强调色 */
+}
+
+#statusline [variant-="background0"] a {
+  color: var(--foreground0); /* 背景0徽章使用前景色 */
+}
+
+#statusline [variant-="background1"] a {
+  color: var(--foreground1); /* 背景1徽章使用次要前景色 */
+}
+
+/* 图片链接的特殊处理 */
+#statusline a:hover img {
+  opacity: 1;  /* 悬停时图片更清晰 */
+}
+#subtitle-line {
+  display: inline-block;
+  align-items: center;
+  gap: 2px;
+}
+
+#subtitle a {
+  color: rgb(57 , 255 , 20);
+  text-decoration: none;
+}
+
+#subtitle b {
+  color: lime;
 }
 
 @layer utils {
-    column,[is-~=column] {
-        flex-direction: column
+  column,[is-~=column] {
+    flex-direction: column
+  }
+
+  row,column,[is-~=row],[is-~=column] {
+    display: flex;
+    &[gap-~="1"] {
+      column-gap: 1ch;
+      row-gap: 1lh
     }
-
-    row,column,[is-~=row],[is-~=column] {
-        display: flex;
-        &[gap-~="1"] {
-            column-gap: 1ch;
-            row-gap: 1lh
-        }
-
-        &[gap-~="2"] {
-            column-gap: 2ch;
-            row-gap: 2lh
-        }
-
-        &[gap-~="4"] {
-            column-gap: 4ch;
-            row-gap: 4lh
-        }
-
-        &[self-~=grow] {
-            flex-grow: 1
-        }
-
-        &[self-~="!grow"] {
-            flex-grow: 0
-        }
-
-        &[self-~=shrink] {
-            flex-shrink: 1
-        }
-
-        &[self-~="!shrink"] {
-            flex-shrink: 0
-        }
-
-        &[self-~="!basis"] {
-            flex-basis: 0
-        }
-
-        &[align-^=start] {
-            align-items: flex-start
-        }
-
-        &[align-^=end] {
-            align-items: flex-end
-        }
-
-        &[align-^=center] {
-            align-items: center
-        }
-
-        &[align-^=stretch] {
-            align-items: stretch
-        }
-
-        &[align-$=between] {
-            justify-content: space-between
-        }
-
-        &[align-$=start] {
-            justify-content: flex-start
-        }
-
-        &[align-$=end] {
-            justify-content: flex-end
-        }
-
-        &[align-$=center] {
-            justify-content: center
-        }
+    &[gap-~="2"] {
+      column-gap: 2ch;
+      row-gap: 2lh
     }
+    &[gap-~="4"] {
+      column-gap: 4ch;
+      row-gap: 4lh
+    }
+    &[self-~=grow] {
+      flex-grow: 1
+    }
+    &[self-~="!grow"] {
+      flex-grow: 0
+    }
+    &[self-~=shrink] {
+      flex-shrink: 1
+    }
+    &[self-~="!shrink"] {
+      flex-shrink: 0
+    }
+    &[self-~="!basis"] {
+      flex-basis: 0
+    }
+    &[align-^=start] {
+      align-items: flex-start
+    }
+    &[align-^=end] {
+      align-items: flex-end
+    }
+    &[align-^=center] {
+      align-items: center
+    }
+    &[align-^=stretch] {
+      align-items: stretch
+    }
+    &[align-$=between] {
+      justify-content: space-between
+    }
+    &[align-$=start] {
+      justify-content: flex-start
+    }
+    &[align-$=end] {
+      justify-content: flex-end
+    }
+    &[align-$=center] {
+      justify-content: center
+    }
+  }
 }
 
 @layer utils {
-    [space-] {
-        &[space-~="p:0"] {
-            padding: 0
-        }
-
-        &[space-~="p:1"] {
-            padding: 1lh 1ch
-        }
-
-        &[space-~="p:2"] {
-            padding: 2lh 2ch
-        }
-
-        &[space-~="px:0"] {
-            padding-left: 0;
-            padding-right: 0
-        }
-
-        &[space-~="px:1"] {
-            padding-left: 1ch;
-            padding-right: 1ch
-        }
-
-        &[space-~="px:2"] {
-            padding-left: 2ch;
-            padding-right: 2ch
-        }
-
-        &[space-~="px:3"] {
-            padding-left: 3ch;
-            padding-right: 3ch
-        }
-
-        &[space-~="px:4"] {
-            padding-left: 4ch;
-            padding-right: 4ch
-        }
-
-        &[space-~="py:0"] {
-            padding-top: 0;
-            padding-bottom: 0
-        }
-
-        &[space-~="py:1"] {
-            padding-top: 1lh;
-            padding-bottom: 1lh
-        }
-
-        &[space-~="py:2"] {
-            padding-top: 2lh;
-            padding-bottom: 2lh
-        }
-
-        &[space-~="pl:0"] {
-            padding-left: 0
-        }
-
-        &[space-~="pl:1"] {
-            padding-left: 1ch
-        }
-
-        &[space-~="pl:2"] {
-            padding-left: 2ch
-        }
-
-        &[space-~="pr:0"] {
-            padding-right: 0
-        }
-
-        &[space-~="pr:1"] {
-            padding-right: 1ch
-        }
-
-        &[space-~="pr:2"] {
-            padding-right: 2ch
-        }
-
-        &[space-~="pt:0"] {
-            padding-top: 0
-        }
-
-        &[space-~="pt:1"] {
-            padding-top: 1lh
-        }
-
-        &[space-~="pt:2"] {
-            padding-top: 2lh
-        }
-
-        &[space-~="pb:0"] {
-            padding-bottom: 0
-        }
-
-        &[space-~="pb:1"] {
-            padding-bottom: 1lh
-        }
-
-        &[space-~="pb:2"] {
-            padding-bottom: 2lh
-        }
-
-        &[space-~="mx:0"] {
-            margin-left: 0;
-            margin-right: 0
-        }
-
-        &[space-~="mx:1"] {
-            margin-left: 1ch;
-            margin-right: 1ch
-        }
-
-        &[space-~="mx:2"] {
-            margin-left: 2ch;
-            margin-right: 2ch
-        }
-
-        &[space-~="my:0"] {
-            margin-top: 0;
-            margin-bottom: 0
-        }
-
-        &[space-~="my:1"] {
-            margin-top: 1lh;
-            margin-bottom: 1lh
-        }
-
-        &[space-~="my:2"] {
-            margin-top: 2lh;
-            margin-bottom: 2lh
-        }
-
-        &[space-~="ml:0"] {
-            margin-left: 0
-        }
-
-        &[space-~="ml:1"] {
-            margin-left: 1ch
-        }
-
-        &[space-~="ml:2"] {
-            margin-left: 2ch
-        }
-
-        &[space-~="mr:0"] {
-            margin-right: 0
-        }
-
-        &[space-~="mr:1"] {
-            margin-right: 1ch
-        }
-
-        &[space-~="mr:2"] {
-            margin-right: 2ch
-        }
-
-        &[space-~="mt:0"] {
-            margin-top: 0
-        }
-
-        &[space-~="mt:1"] {
-            margin-top: 1lh
-        }
-
-        &[space-~="mt:2"] {
-            margin-top: 2lh
-        }
-
-        &[space-~="mb:0"] {
-            margin-bottom: 0
-        }
-
-        &[space-~="mb:1"] {
-            margin-bottom: 1lh
-        }
-
-        &[space-~="mb:2"] {
-            margin-bottom: 2lh
-        }
+  [space-] {
+    &[space-~="p:0"] {
+      padding: 0
     }
+    &[space-~="p:1"] {
+      padding: 1lh 1ch
+    }
+    &[space-~="p:2"] {
+      padding: 2lh 2ch
+    }
+    &[space-~="px:0"] {
+      padding-left: 0;
+      padding-right: 0
+    }
+    &[space-~="px:1"] {
+      padding-left: 1ch;
+      padding-right: 1ch
+    }
+    &[space-~="px:2"] {
+      padding-left: 2ch;
+      padding-right: 2ch
+    }
+    &[space-~="px:3"] {
+      padding-left: 3ch;
+      padding-right: 3ch
+    }
+    &[space-~="px:4"] {
+      padding-left: 4ch;
+      padding-right: 4ch
+    }
+    &[space-~="py:0"] {
+      padding-top: 0;
+      padding-bottom: 0
+    }
+    &[space-~="py:1"] {
+      padding-top: 1lh;
+      padding-bottom: 1lh
+    }
+    &[space-~="py:2"] {
+      padding-top: 2lh;
+      padding-bottom: 2lh
+    }
+    &[space-~="pl:0"] {
+      padding-left: 0
+    }
+    &[space-~="pl:1"] {
+      padding-left: 1ch
+    }
+    &[space-~="pl:2"] {
+      padding-left: 2ch
+    }
+    &[space-~="pr:0"] {
+      padding-right: 0
+    }
+    &[space-~="pr:1"] {
+      padding-right: 1ch
+    }
+    &[space-~="pr:2"] {
+      padding-right: 2ch
+    }
+    &[space-~="pt:0"] {
+      padding-top: 0
+    }
+    &[space-~="pt:1"] {
+      padding-top: 1lh
+    }
+    &[space-~="pt:2"] {
+      padding-top: 2lh
+    }
+    &[space-~="pb:0"] {
+      padding-bottom: 0
+    }
+    &[space-~="pb:1"] {
+      padding-bottom: 1lh
+    }
+    &[space-~="pb:2"] {
+      padding-bottom: 2lh
+    }
+    &[space-~="mx:0"] {
+      margin-left: 0;
+      margin-right: 0
+    }
+    &[space-~="mx:1"] {
+      margin-left: 1ch;
+      margin-right: 1ch
+    }
+    &[space-~="mx:2"] {
+      margin-left: 2ch;
+      margin-right: 2ch
+    }
+    &[space-~="my:0"] {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+    &[space-~="my:1"] {
+      margin-top: 1lh;
+      margin-bottom: 1lh
+    }
+    &[space-~="my:2"] {
+      margin-top: 2lh;
+      margin-bottom: 2lh
+    }
+    &[space-~="ml:0"] {
+      margin-left: 0
+    }
+    &[space-~="ml:1"] {
+      margin-left: 1ch
+    }
+    &[space-~="ml:2"] {
+      margin-left: 2ch
+    }
+    &[space-~="mr:0"] {
+      margin-right: 0
+    }
+    &[space-~="mr:1"] {
+      margin-right: 1ch
+    }
+    &[space-~="mr:2"] {
+      margin-right: 2ch
+    }
+    &[space-~="mt:0"] {
+      margin-top: 0
+    }
+    &[space-~="mt:1"] {
+      margin-top: 1lh
+    }
+    &[space-~="mt:2"] {
+      margin-top: 2lh
+    }
+    &[space-~="mb:0"] {
+      margin-bottom: 0
+    }
+    &[space-~="mb:1"] {
+      margin-bottom: 1lh
+    }
+    &[space-~="mb:2"] {
+      margin-bottom: 2lh
+    }
+  }
+}
+#friendButtonBox{
+  position: fixed;
+  top: 260px;
+  left: 10px;
+  width: 140px;
+  padding: 12px;
+  z-index: 9999;
+  cursor: move;
+
+  background-color: #e6e6e6;      /* 淡灰背景 */
+  border: 3px double #000;        /* 黑色双线边框 */
+
+  font-family: "Times New Roman", serif;
+  font-size: 11px;
+  color: #000;
+  
+}
+
+/* 88x31 按钮预览 */
+.fb-preview{
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.fb-preview img{
+  width: 88px;
+  height: 31px;
+  image-rendering: pixelated;
+}
+
+#friendButtonBox textarea{
+  box-sizing: border-box;
+  width: 92%;
+  height: 65px;
+
+  display: block;
+  margin: 0 auto;
+  padding: 4px;
+
+  font-family: "Times New Roman", serif;
+  font-size: 9px;
+  line-height: 1.2;
+
+  background-color: #f2f2f2;
+  border: 2px double #000;
+
+  resize: none;
+
+  /* 长链接折行 */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#friendButtonBox textarea::-webkit-scrollbar{
+  display: none;   /* 比 width:0 更彻底 */
+}
+
+@media (hover: none) and (pointer: coarse) {
+  #friendButtonBox {
+    display: none;
+  }
 }
 
 
+
+/* 提示文字 */
+.fb-hint{
+  margin: 3px 0 0 0;
+  text-align: center;
+  user-select: none;
+  opacity: 0.85;
+}
   </style>
 </head>
 
@@ -466,7 +517,7 @@ body {
     <!-- 左侧介绍 -->
     <div class="intro">
       <h1>猫涅的秘密结社</h1>
-      <h2>Cyber Security / C / Linux</h2>
+      <h2>信息安全 / C / Linux</h2>
 
       <p>
         一个终端风格的个人主页    <br>
@@ -486,7 +537,7 @@ body {
 
       <div class="terminal-body">
         <div><span class="prompt">$</span>whoami</div>
-        <div>信息安全专业本科生 / C / Linux / Web</div>
+        <div>noir</div>
 
         <br />
 
@@ -494,14 +545,18 @@ body {
         <div>
           webtui.md<br />
           cve-notes.md<br />
-          linux.md
+          subtitle.sh
         </div>
 
         <br />
 
-        <div>
-          <span class="prompt">$</span><span class="cursor">█</span>
-        </div>
+<div><span class="prompt">$</span> ./subtitle.sh</div>
+<div id="subtitle-line">
+  <span id="subtitle"></span><span class="cursor">█</span>
+</div>
+
+<br />
+
       </div>
     </div>
 
@@ -511,9 +566,9 @@ body {
 
 
 <row id="statusline" >
-      <span is-="badge" variant-="blue" >NORMAL</span>
+      <span is-="badge" variant-="blue" ><a href="https://github.com/NirvanafeLis">My Github Page</a></span>
       <span is-="badge" variant-="background1" >
-        <span class="branch-name" >nyanbot</span>
+        <span class="branch-name" ><a href="https://github.com/adryd325/oneko.js">Oneko</a></span>
       </span>
       <row self-="grow" >
         <span is-="badge" variant-="background0" >index.html</span>
@@ -532,6 +587,269 @@ body {
     trail.style.setProperty("--x", e.clientX + "px");
     trail.style.setProperty("--y", e.clientY + "px");
   });
+</script>
+<script>
+  const trail = document.getElementById("cursor-trail");
+  document.addEventListener("mousemove", e => {
+    trail.style.setProperty("--x", e.clientX + "px");
+    trail.style.setProperty("--y", e.clientY + "px");
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script>
+const subtitlePool = [
+  "<a href='https://www.bilibili.com/video/BV19J41187vh'>于是乎地球爆炸了</a>",
+  "请于十四天之内归还暂借的书籍 谢谢配合",
+  "<a href='https://www.bilibili.com/video/BV15E421j7Bu'>我已失去太多 无法用言语诉说</a>",
+  "午后的阳光照在草坪上 微热的地面 与那个刚好的笑容",
+  "<a href='https://www.bilibili.com/video/BV1oXZRYME2k'>再睡个五分钟....</a>",
+  "一会吃点啥呢....",
+  "<a href='https://www.bilibili.com/video/BV1Qb411g7bY'>怎样都好了啦...</a>",
+  "<b style='color:blue;'>hello world =)</b>",
+  "<a href='https://www.bilibili.com/video/BV1fs411p7de'>在天空的极限我们也可用羽翼开拓边界</a>",
+  "<a href='https://www.bilibili.com/video/BV1P4411f7M9'>Nice to meet you!</a>",
+  "And you don't seem to understand......",
+  "<a href='https://www.bilibili.com/video/BV1BpgPzJEWm'>放心 我不会回头 你看</a>",
+  "即使死也死不透的笑容...把我们杀死了",
+  "<a href='https://www.bilibili.com/video/BV1gJ411H7jq'>不成熟 无情（常） 但是</a>",
+  "过于真实的幻象露出了天使般的微笑",
+  "<a href='https://www.bilibili.com/video/BV1cx411c7vb'>「这 就是 我所 进化着的 过程中 的第一个篇章」</a>",
+  "Present day   Present time   hahahaha",
+  "<a href='https://www.bilibili.com/video/BV1db4y1x7v6'>扫除＋洗衣＋烧饭＋懒觉＋其他的种种＝生计煤气表</a>",
+  "我们的身体上生起了锈 终于是到了会生起锈的这一天啊",
+  "<a href='https://www.bilibili.com/video/BV1QkhizEEhU'>一点都没变呢 好巧不巧 我也是</a>",
+  "仿佛一点一点 扼住我的咽喉般 杀死昨日为止的自己",
+  '<a href="/room/index.html"><b style="color:rgb(255,0,0);">※您已被警告过了</b></a>',
+  "赞颂吧　救世的号角今日依旧回荡",
+  "晨光里 是手握牙刷 啪塔啪塔 随泡沫滴落 刷着牙的你",
+  "夜色中 是耳戴廉价耳机 滋滋噪声下 仍享受摇滚乐的你",
+  "春天里 是吸溜吸溜擤鼻 咒骂季节的你",
+  "盛夏天 是与头痛搏斗 喀嚓喀嚓吃着冰沙的你",
+  "晨光里 是迷迷糊糊 还握着遥控器就已出门的你",
+  "夜色中 是看到新闻里 驱赶流浪猫 簌簌落泪的你",
+  "金秋下 是像孩童那般 沙啦沙啦 脚踩落叶的你",
+  "寒冬中 是为沉睡的万物生灵 默默悼念的你",
+  "循环往复 斑斓色彩 渐次流转 直至指尖冻僵 仍随梦境沉浮",
+  "如今我仍孤独一人 向外窥探着宇宙",
+  "正在思考 明天中!",
+  "连自己也不爱惜 又何能爱戴他人呢",
+  "Welcome to the melty land",
+  'Aster,Aster,My Lover and Death,"PINK KISS" in my heart',
+  "十七岁朝气蓬勃的我可是被这座城市囚禁住的霓虹",
+  "跳起超凡俗脱的影色之舞",
+  "等有了答案再说=永远不会有答案",
+  "若要为了他人而活 就是在削减仅限的生命",
+  "饮尽眼泪后 我会迎来终点吗？",
+  "无论如何挣扎 明天都不会到来",
+  "老师常言教科书上的才是正确答案 可上面皆是难懂的话语",
+  "记忆终有一日会消散殆尽所以来记录吧",
+  "脚什么的只是装饰 上边的大人物是不会懂的",
+  "终幕的海 没有想象中的蔚蓝",
+  "像逆行在 通往大人的公路 粉红的喇叭裤 墨镜里装星空",
+  "我躲在夜里取笑着黑 因为没有谁能杀死鬼",
+  "可是我的自卑胜过了一切爱我的 于是我把爱人们都杀死了",
+  "如此生活30年 直到大厦崩塌",
+  "或许你会有一天怀念 可是我已不在",
+  "无法振翅的飞鸟尖声啸鸣　撕碎那阻碍前路的围栏",
+  "注定无法成为其他任何人的雨",
+  "总是没法顺利地从被窝里出来呢",
+  "不合情理的安心之物在便利店售价一百几十元",
+  "是骗人的 变成一团糟了...",
+  "你已经不在了 唯有我踽踽独行",
+  "人生若是二十七岁就能死掉 那么是摇滚救了我",
+  "おやすみ、おやすみ",
+  "你那张令人移不开眼的小脸啊 如同火灾里遭了殃的摩天楼",
+  "You look lonely.I can fix that.",
+  "从容安乐地生活 无拘无束地爱 季节一去不复返",
+  "伦巴伦巴伦巴伦巴伦巴伦巴伦巴伦巴",
+  "不要看管人 会变得不幸",
+  "只是一味等待 黎明终究不会到来",
+  "但愿消逝之时 依旧美丽如初",
+  "你站在桥上看风景 看风景人在楼上看你",
+  "明月装饰了你的窗子 你装饰了别人的梦",
+  "然后你就会用你最喜欢的那把吉他打我",
+  "按'z'使出终极斩击！",
+  "早上好！以防再也见不到你，那就再祝你下午好，晚上好，晚安！",
+  "ロックンロールは鳴り止まないっ",
+  "架起名为孤独的围栏 在草地上立起生人勿近的牌子",
+  "并无因果报应 皆是塞翁失马",
+  "就算在放眼俯瞰这世界 肉体吃的却是垃圾食品",
+  "模仿着 那个特摄剧上看到的 英雄变身的姿势 笑得很是开心",
+  "今天各位做的也都是不想做的事吗",
+  "back to history and remember when I was born",
+  "若是想到了就跨步前行吧 不要留下任何遗憾",
+  "惊天动地史无前例的回忆由电子音构成",
+  "10年以后脸上的妆早就掉光了",
+  "来 踏上旅程吧 前往令人深爱的世界",
+  '<a href="/room/index.html"><b style="color:rgb(255,0,0);">鏄殑 杩欓兘鏄綘鐨勯敊鍝�</b></a>',
+  "你的声音、为我而生、为我鸣响",
+  "锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷",
+  "锟斤拷锟斤拷烫烫烫烫烫烫烫烫烫烫烫烫烫烫",
+  "屯屯屯屯屯屯屯屯屯屯屯屯屯屯屯屯屯屯屯",
+  "再睡个五分钟....",
+  "愿前路幸福常伴",
+  "保重你自己 在我心中没有人能替代你",
+  "面硬加咸蔬菜蒜蓉和油多多",
+  "「一定是命運的寵兒，簡直如魔性的故事，將誰都牢牢釘死的一等星」",
+  "piano solo for about 30s",
+  "想要永远被这微风吹拂着 只想看着蓝天是一种任性吗",
+  "尼采和弗洛伊德都没有写填住这个洞口的方法啊",
+  "想一把烧掉你那滑稽的表情",
+  "清空脸上的不满 微笑着站在前台便是",
+  "像是在捂住双眼里坠落的景色一般 飘渺的我不属于任何人",
+  "每月一次 那美酒只是奢侈 我浅尝辄止",
+  "谨遵用法用量 上网快乐冲浪",
+  "只想与你完美告别",
+  "Time to mix drinks and change lives.",
+  "人不能操狗. 至少不该操",
+  "不多不多!多乎哉?不多也.",
+  "战胜残酷的命运 脉搏(希望)已然消失也要砥砺前行 因为那就是我们的佐贺！",
+  "life goes on with or without you",
+  "I will burn my dread",
+  "Memento mori",
+  "Something's wrong, I can feel it",
+  "You can do anything you set your mind to'  man",
+  "我就一张牌啦",
+  "是夜晚听了巴赫的旋律的错吧 变成这样的心情",
+  "那孩子孑然一身 总是一个人玩耍 这只鸟也是形影单只 总是独自飞翔",
+  "『只是一个人孤零零地呆站着 像那座虚张声势的塔一样』",
+  "光是活着就不错了 最好别要求太多",
+  "这也是末法之世的一个侧面",
+  "Wasshoi!Wasshoi!Wasshoi!",
+  "yeeeeeeeeeeeeeeeeeeeeeeeart!!",
+  "要做就大胆去做 此事在史记中亦有记载...",
+  "我的钻头可是突破天际的钻头啊",
+  "哈-利-路-亚-",
+  "哦我的天哪 该死 我发誓我会用尖皮靴狠狠地踢你的屁股",
+  "越是追寻着憧憬之物 就越是受到伤害",
+  "努力 未来 A BEAUTIFUL STAR",
+  "背负着背叛者的名义 舍弃了一切去战斗的男人",
+  "少年少女前を向く 暮れる炎天さえ希望論だって",
+  "不<del>战斗</del>编程就无法生存",
+  "胜利的方程式已然确立",
+  "dont say no  just live more",
+  "这虽然是游戏 但可不是闹着玩的",
+  "<b style='color:rgb(255,0,0);'>I gently open the door...</b>",
+  "失败了就再来一次 再来一次 再来一次 再来一次",
+  "踊ってない夜を知らない",
+  "说是星星在守护我们 但那也只有夜晚不是吗",
+  "我要美酒配咖啡 一杯又一杯",
+  "稲妻の様に生きていたいだけ",
+  "忘掉防晒霜 忘掉付税单 忘掉去年夏天糟糕的爱",
+  "Gold jewelry shining so bright  Strawberry champagne on ice",
+  "I hate myself for loving you",
+  "Is this the real life   Is this just fantasy",
+  "我们所度过的每个平凡的日常 也许就是连续发生的奇迹",
+  "龙 可是帝王之征啊",
+  "说着再见却再也不见 流下了那般不像样的泪水",
+  "快住手 这根本不是决斗",
+  "用冰锥贯穿前额叶来快速获取诺贝尔奖",
+  "趁这血尚温一口饮下"
+  ];
+// 每句歌词/台词都标上出处还是太累人了——还是让同好能get到的就行
+// 说到底还是条懒狗
+// 奥尔特云的权重明显太大了不过无所谓吧
+// ====== 近 20 条尽量不重复 ======
+const HISTORY_SIZE = 20;
+const recentHistory = [];
+let lastSubtitle = null;
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pushHistory(s) {
+  recentHistory.push(s);
+  if (recentHistory.length > HISTORY_SIZE) recentHistory.shift();
+}
+
+function getRandomNoRepeat() {
+  if (!subtitlePool || subtitlePool.length === 0) return "";
+
+  const recentSet = new Set(recentHistory);
+
+  // 1) 优先选不在最近 HISTORY_SIZE 条中的
+  let candidates = subtitlePool.filter(s => !recentSet.has(s));
+
+  // 2) 再尽量避免和上一次相同
+  if (subtitlePool.length > 1) {
+    candidates = candidates.filter(s => s !== lastSubtitle);
+  }
+
+  // 3) candidates 为空就降级：放开 history 限制，但仍尽量避开 lastSubtitle
+  if (candidates.length === 0) {
+    candidates = subtitlePool.filter(s => s !== lastSubtitle);
+  }
+
+  // 4) 仍为空（池子只有 1 条）就只能选它
+  if (candidates.length === 0) {
+    candidates = subtitlePool.slice();
+  }
+
+  const next = pickRandom(candidates);
+  lastSubtitle = next;
+  pushHistory(next);
+  return next;
+}
+
+let typed = new Typed('#subtitle', {
+  strings: [getRandomNoRepeat()],
+  typeSpeed: 90,
+  backSpeed: 40,
+  backDelay: 1400,
+  startDelay: 500,
+  loop: true,
+  smartBackspace: false,
+  showCursor: false,
+  contentType: 'html',
+
+  onStringTyped: function(pos, self) {
+    // 打完一句后 Typed 会回删；这里提前准备下一句
+    self.strings = [getRandomNoRepeat()];
+  }
+});
+</script>
+
+<!-- ================== Neocities-style button box ================== -->
+<div id="friendButtonBox">
+  <div class="fb-preview">
+    <a href="https://maonie.neocities.org/" target="_blank">
+      <img src="https://maonie.neocities.org/3rd.gif" alt="maonie">
+    </a>
+  </div>
+<textarea readonly onclick="this.select();"><a href="https://www.maonie.top/" target="_blank">
+<img src="https://maonie.neocities.org/2.gif" alt="maonie">
+</a></textarea>
+  <p class="fb-hint">drag me 🖱️</p>
+</div>
+<script>
+(function(){
+  const box = document.getElementById("friendButtonBox");
+  if (!box) return;
+
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  box.addEventListener("mousedown", (e) => {
+    dragging = true;
+    offsetX = e.clientX - box.offsetLeft;
+    offsetY = e.clientY - box.offsetTop;
+    box.style.opacity = "0.85";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    box.style.left = (e.clientX - offsetX) + "px";
+    box.style.top  = (e.clientY - offsetY) + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (!dragging) return;
+    dragging = false;
+    box.style.opacity = "1";
+  });
+})();
 </script>
 
 </body>
