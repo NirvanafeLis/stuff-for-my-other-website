@@ -1,21 +1,260 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Page</title>
-    <style>
-    marquee{
-      background:rgba(100,149,237,0.1);
-      }
-    </style>
-    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
-  </head>
-  <body>
-  <a href="https://maonie.neocities.org/index2" data-home-link>返回主页</a>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>log</title>
+  <style>
+    :root{
+      --xp-blue1:#0a5db3;
+      --xp-blue2:#2b87df;
+      --xp-border:#6b7a8a;
+      --xp-bg:#d4d0c8;
+      --panel:#efefef;
+      --shadow:#9a9a9a;
+      --text:#111;
+      --link:#003399;
+      --linkv:#551A8B;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: var(--xp-bg);
+      color:var(--text);
+      font: 12px/1.6 "Tahoma","MS Sans Serif","宋体",sans-serif;
+    }
+
+    /* 顶部“标题条” */
+    .topbar{
+      background: linear-gradient(180deg, var(--xp-blue2), var(--xp-blue1));
+      color:#fff;
+      padding:10px 12px;
+      border-bottom:1px solid #083d73;
+    }
+    .topbar h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:0.5px;
+      text-shadow: 0 1px 0 rgba(0,0,0,.25);
+    }
+    .topbar .sub{
+      opacity:.9;
+      font-size:12px;
+      margin-top:2px;
+    }
+
+    /* “窗口”容器 */
+    .window{
+      width:min(920px, 94vw);
+      margin:14px auto 24px;
+      border:1px solid var(--xp-border);
+      background: var(--panel);
+      box-shadow: 2px 2px 0 var(--shadow);
+    }
+    .win-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 8px;
+      background: linear-gradient(180deg, #cfe5ff, #8fbbe7);
+      border-bottom:1px solid #7aa5d2;
+      color:#00315f;
+      font-weight:bold;
+    }
+    .win-title .dot{
+      width:14px;height:14px;
+      border:1px solid #2c5d8a;
+      background: radial-gradient(circle at 30% 30%, #fff, #8fbbe7);
+    }
+    .content{
+      padding:10px 12px 14px;
+      background: #fff;
+      border-top:1px solid #fff;
+    }
+
+    /* 经典导航条 */
+    .nav{
+      background:#f6f6f6;
+      border-bottom:1px solid #cfcfcf;
+      padding:6px 10px;
+    }
+    .nav a{
+      color:var(--link);
+      text-decoration:underline;
+      margin-right:10px;
+    }
+    .nav a:visited{color:var(--linkv);}
+    .nav .sep{color:#777;margin:0 6px;}
+
+    /* “公告/提示框” */
+    .notice{
+      background:#ffffe1;
+      border:1px solid #e2d27a;
+      padding:8px 10px;
+      margin:10px 0 12px;
+    }
+
+    /* 更新日志列表 */
+    .log{
+      border:1px solid #c9c9c9;
+      background:#fafafa;
+    }
+    .log-item{
+      border-top:1px solid #e6e6e6;
+      padding:10px 10px 12px;
+      background:#fff;
+    }
+    .log-item:first-child{border-top:none;}
+    .log-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:baseline;
+      margin-bottom:6px;
+    }
+    .log-date{
+      font-weight:bold;
+      color:#00315f;
+    }
+    .log-ver{
+      font-family: "Courier New", monospace;
+      color:#333;
+      background:#eaeaea;
+      border:1px solid #cfcfcf;
+      padding:0 6px;
+    }
+    .badge{
+      font-size:11px;
+      padding:1px 6px;
+      border:1px solid #9bb6d1;
+      background:#d9ecff;
+      color:#00315f;
+    }
+    ul{
+      margin:6px 0 0 18px;
+      padding:0;
+    }
+    li{margin:2px 0;}
+    .cat{
+      font-weight:bold;
+    }
+
+    .footer{
+      text-align:center;
+      color:#333;
+      padding:10px 0 14px;
+      font-size:11px;
+    }
+    .footer a{color:var(--link);}
+
+    /* 让它更“古早”：轻微像素感边框 */
+    .pixel{
+      outline:1px dotted #999;
+      outline-offset:-3px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <h1>网站更新日志</h1>
+    <div class="sub">Last Updated: <span id="lastUpdated">2026-02-11</span> · </div>
+  </div>
+
+  <div class="window">
+    <div class="win-title">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Changelog.html</span>
+    </div>
+
+    <div class="nav">
+    </div>
 <script src="/assets/window-mode.js"></script>
-<marquee behavior="alternate" direction="right" scrollamount="20">
-  <h4>公告——该页面基本没编辑 总会搞完的</h4>
+    <div class="content">
+      <div class="notice pixel">
+        <marquee  direction="left" scrollamount="10">
+        <b>公告：</b>这里记录本站/项目的版本变更 主要用来督促进度 催更可以留评论（逃）。
 </marquee>
-  </body>
+
+      </div>
+
+      
+      <main class="log" aria-label="更新日志">
+        <section class="log-item" id="v039c">
+          <div class="log-head">
+            <span class="log-date">2026-02-22</span>
+            <span class="log-ver">v0.3.9c</span>
+            <span class="badge">新增</span>
+            <span class="badge">变更</span>
+          </div>
+          <ul>
+            <li><span class="cat">新增：</span>电子宠物页面(pet)上线 点击主页的小机器人/菜单栏点击即可开启</li>
+            <li><span class="cat">新增：</span>可关闭的开机/关机音效</li>
+            <li><span class="cat">变更：</span>开启窗口时会显示加载中 防止可能出现的问题</li>
+          </ul>
+        </section>
+          <section class="log-item" id="v039b">
+          <div class="log-head">
+            <span class="log-date">2026-02-19</span>
+            <span class="log-ver">v0.3.9b</span>
+            <span class="badge">变更</span>
+          </div>
+          <ul>
+            <li><span class="cat">变更：</span>调整了typing.js的逻辑 给介绍页面加了个skip按钮 这下加载时间长也没事了</li>
+          </ul>
+        </section>
+        <section class="log-item" id="v039">
+          <div class="log-head">
+            <span class="log-date">2026-02-17</span>
+            <span class="log-ver">v0.3.9</span>
+            <span class="badge">新增</span>
+            <span class="badge">变更</span>
+          </div>
+          <ul>
+            <li><span class="cat">新增：</span>更新日志页面(log)上线</li>
+            <li><span class="cat">变更：</span>给设置页面加了点样式</li>
+          </ul>
+        </section>
+        <!-- 
+        <section class="log-item" id="v104">
+          <div class="log-head">
+            <span class="log-date">2026-02-03</span>
+            <span class="log-ver">v1.0.4</span>
+            <span class="badge">修复</span>
+          </div>
+          <ul>
+            <li><span class="cat">修复：</span>下载页链接在某些浏览器下打不开的问题。</li>
+            <li><span class="cat">修复：</span>联系页表单提交后提示不清晰。</li>
+          </ul>
+        </section>
+
+        <section class="log-item" id="v100">
+          <div class="log-head">
+            <span class="log-date">2026-01-20</span>
+            <span class="log-ver">v1.0.0</span>
+            <span class="badge">变更</span>
+          </div>
+          <ul>
+            <li><span class="cat">发布：</span>站点初版上线。</li>
+            <li><span class="cat">变更：</span>统一页面导航与基础样式。</li>
+          </ul>
+        </section>
+        -->
+      </main>
+
+      <div class="footer">
+        © 2025-2026 Powered By Maonie ·
+        <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">返回顶部</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 自动写入“最后更新”日期（取最新日志项日期）
+    (function(){
+      const firstDate = document.querySelector('.log-item .log-date');
+      if(firstDate) document.getElementById('lastUpdated').textContent = firstDate.textContent.trim();
+    })();
+  </script>
+</body>
 </html>

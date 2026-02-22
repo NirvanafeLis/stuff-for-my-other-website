@@ -38,7 +38,7 @@
 
         <div class="xp-progress-text">
           <span id="splash-progress-text">0%</span>
-          <span class="xp-version">v0.3.9</span>
+          <span class="xp-version">v0.3.9c</span>
         </div>
       </div>
 
@@ -53,7 +53,7 @@
 推荐1920*1080分辨率以下的用户用<b>F11全屏</b>的方式观看 获取最佳体验<br>
 可能会包含 较亮/闪光的图片 有光敏癫痫相关疾病史的人士还请注意<br>
 接下来 给自己起个名 进入网页吧<br>
-
+开机会有音效 介意的请关闭<br>
       </div>
     </div>
 
@@ -66,7 +66,10 @@
       <label for="login-password">Password:</label>
       <input type="text" id="login-password" readonly value="*******" tabindex="-1">
     </div>
-
+<label class="xp-check" style="display:block; margin-top:10px;">
+  <input type="checkbox" id="login-sfx">
+  <span>开机/关机音效</span>
+</label>
     <div class="vb-button-group">
       <button id="login-btn" type="button">OK</button>
     </div>
@@ -83,10 +86,9 @@
   <!-- 页面 -->
   <div class="page">
     <section class="top">
-      <div class="dialogue-bar">你好 <span data-username>[user_name_here]</span> 这是一个测试页面 大部分都还没写完...<br>返回主页之前请通过右下角菜单关机</div>
-      <div class="avatar">(｡･∀･)ﾉ</div>
+      <div class="dialogue-bar">你好 <span data-username>[user_name_here]</span> 这是一个测试页面 大部分都还没写完...<br>返回主页之前请通过左下角菜单关机<br>想要以<b>全屏</b>开启软件请从左下角菜单开启<br></div>
+      <div class="avatar" data-app="pet"><img src="robot.gif" /></div>
     </section>
-<script src="/oneko/oneko.js"></script>
   
     <div class="divider"></div>
 
@@ -117,19 +119,20 @@
     </section>
   </div>
 
- 
-  <div id="app-backdrop" hidden></div>
 
-  <div id="app-window" class="xp-app" hidden aria-hidden="true">
-    <div class="xp-app-titlebar" id="app-drag-handle">
-      <div class="xp-app-title" id="app-title">App</div>
+
+<template id="tpl-app-window">
+  <div class="xp-app app-window" aria-hidden="false" style="position:absolute;">
+    <div class="xp-app-titlebar app-drag-handle">
+      <div class="xp-app-title app-title">App</div>
       <div class="xp-app-controls">
         <button type="button" class="xp-app-btn" data-win="close" aria-label="Close">×</button>
       </div>
     </div>
 
     <div class="xp-app-body">
-      <iframe id="app-frame" title="app frame" src="about:blank"></iframe>
+      <div class="app-inline" hidden></div>
+      <iframe class="app-frame" title="app frame" src="about:blank"></iframe>
     </div>
 
     <i class="rs rs-n"  data-rs="n"></i>
@@ -141,6 +144,8 @@
     <i class="rs rs-se" data-rs="se"></i>
     <i class="rs rs-sw" data-rs="sw"></i>
   </div>
+</template>
+
 
   <!-- statusline -->
   <row id="statusline">
@@ -174,14 +179,14 @@
 
         <div class="xp-sep"></div>
 
-        <button class="xp-item" role="menuitem" id="xp-item-log">
+        <button class="xp-item" role="menuitem" id="xp-item-pet">
           <span class="xp-ico" aria-hidden="true"></span>
-          <span class="xp-text">更新日志</span>
+          <span class="xp-text">电子宠物</span>
         </button>
 
         <button class="xp-item" role="menuitem" id="xp-item-links">
           <span class="xp-ico" aria-hidden="true"></span>
-          <span class="xp-text">友情链接</span>
+          <span class="xp-text"><del>友情链接</del></span>
         </button>
       </div>
 
@@ -189,12 +194,12 @@
       <div class="xp-col xp-col-right" role="none">
         <button class="xp-item xp-item-right" role="menuitem" id="xp-item-settings">
           <span class="xp-ico" aria-hidden="true"></span>
-          <span class="xp-text">设置</span>
+          <span class="xp-text"><del>设置</del></span>
         </button>
 
         <button class="xp-item xp-item-right" role="menuitem" id="xp-item-about">
           <span class="xp-ico" aria-hidden="true"></span>
-          <span class="xp-text">关于</span>
+          <span class="xp-text"><del>关于</del></span>
         </button>
 
         <div class="xp-sep"></div>
@@ -229,7 +234,6 @@
       <a class="shutdown-home-btn" href="https://maonie.neocities.org/">返回主页</a>
     </div>
   </div>
-  
 <script src="app.js" defer></script>
 
 <!-- 伪通知：废弃“返回主页”按钮时弹出 -->
@@ -242,6 +246,37 @@
     本功能已停用。
   </div>
 </div>
+
+
+<template id="tpl-option">
+  <div class="xp-settings">
+
+    <div class="xp-settings-header">
+      <div class="xp-settings-icon"></div>
+      <div>
+        <div class="xp-settings-title">系统设置</div>
+        <div class="xp-settings-sub">修改 nekobot 的行为选项</div>
+      </div>
+    </div>
+
+    <div class="xp-settings-group">
+      <div class="xp-settings-group-title">界面</div>
+
+      <label class="xp-check">
+        <input type="checkbox" id="opt-oneko">
+        <span>启用桌面猫猫（oneko）</span>
+      </label>
+      <br>
+      <label class="xp-check">
+        <input type="checkbox" id="opt-sfx">
+        <span>开机/关机音效</span>
+      </label>
+    </div>
+
+
+  </div>
+</template>
+
 
 </body>
 </html>

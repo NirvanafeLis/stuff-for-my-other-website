@@ -13,6 +13,20 @@
         <link rel="icon" type="image/png" href="favicon.png">
 	</head>
     <style>
+    #skip-btn {
+  background: transparent;
+  color: #00FF02;
+  border: 1px solid #00FF02;
+  font-family: courier;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+#skip-btn:hover {
+  background: #00FF02;
+  color: black;
+}
+
         body {
 
             /**
@@ -119,15 +133,25 @@
         <div id="output-wrap">
             <span id="output"></span>
             <span class="typing-cursor">■</span>
+            <br> <button id="skip-btn">[ Skip ]</button>
           </div>
         <script>
-            var typing = new Typing({
-              source: document.getElementById('source'),
-              output: document.getElementById('output'),
-              delay: 50,
-              done: function() {} //完成打印后的回调事件
-            });
-            typing.start();
+var typing = new Typing({
+  source: document.getElementById('source'),
+  output: document.getElementById('output'),
+delay: function (ch) {
+  if (ch === '\n') return 80;         // 换行停顿
+  if (/[\u4e00-\u9fff]/.test(ch)) return 45; // 中文
+  return 20;                          // 其他
+},
+  done: function() {}
+});
+typing.start();
+document.getElementById('skip-btn').onclick = function() {
+  typing.skip();
+  this.style.display = "none"; // 跳过后隐藏按钮
+};
+
           </script>    
       <div>
         <script type="text/javascript">

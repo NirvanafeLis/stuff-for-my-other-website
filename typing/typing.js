@@ -58,12 +58,19 @@
       return arr;
     },
 
-    print: function (dom, val, callback) {
-      setTimeout(function(){
-        dom.appendChild(document.createTextNode(val));
-        callback();
-      }, this.delay);
-    },
+print: function (dom, val, callback) {
+  var that = this;
+
+  // delay 支持数字或函数
+  var d = that.delay;
+  var wait = (typeof d === 'function') ? d(val) : d;
+
+  setTimeout(function () {
+    dom.appendChild(document.createTextNode(val));
+    callback();
+  }, wait);
+},
+
 
     play: function (ele) {
       if (this._stop) return;
@@ -92,14 +99,16 @@
         curr.parent = ele;
         curr.dom = dom;
 
-        // 检查是否为换行标签 <br>
-        if (curr.dom.nodeName.toLowerCase() === 'br') {
-          setTimeout(function() {
-            that.play(curr.val.length ? curr : curr.parent);
-          }, 100); // 换行时停顿 500 毫秒
-        } else {
-          that.play(curr.val.length ? curr : curr.parent);
-        }
+if (curr.dom.nodeName.toLowerCase() === 'br') {
+  var d = that.delay;
+  var wait = (typeof d === 'function') ? d('\n') : 100; // 让 delay('\n') 控制换行停顿
+  setTimeout(function () {
+    that.play(curr.val.length ? curr : curr.parent);
+  }, wait);
+} else {
+  that.play(curr.val.length ? curr : curr.parent);
+}
+
       }
     },
 
@@ -116,7 +125,12 @@
     resume: function(){
       this._stop = false;
       this.play(this.chain);
-    }
+    },
+    skip: function() {
+      this._stop = true;
+      this.output.innerHTML = this.source.innerHTML;
+}
+
   };
 
   Typing.version = '2.1';
